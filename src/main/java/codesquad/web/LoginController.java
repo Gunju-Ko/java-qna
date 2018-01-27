@@ -6,6 +6,7 @@ import codesquad.dto.UserDto;
 import codesquad.security.HttpSessionUtils;
 import codesquad.service.UserService;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.annotation.Resource;
@@ -29,4 +30,8 @@ public class LoginController {
         }
     }
 
+    @GetMapping("login")
+    public String login() {
+        return "/user/login";
+    }
 }

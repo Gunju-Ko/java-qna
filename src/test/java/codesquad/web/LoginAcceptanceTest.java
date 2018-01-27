@@ -2,24 +2,26 @@ package codesquad.web;
 
 import codesquad.domain.User;
 import org.junit.Test;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MultiValueMap;
 import support.test.AcceptanceTest;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static support.test.HtmlFormDataBuilder.urlEncodedForm;
 
 public class LoginAcceptanceTest extends AcceptanceTest {
+
+    @Test
+    public void login() throws Exception {
+        ResponseEntity<String> response = template().getForEntity("/login", String.class);
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
+    }
 
     @Test
     public void login_성공() throws Exception {
         User javajigi = new User(1, "javajigi", "test", "자바지기", "javajigi@slipp.net");
 
         ResponseEntity<String> response = template().postForEntity("/login", htmlRequest(javajigi), String.class);
-
         assertThat(response.getStatusCode(), is(HttpStatus.FOUND));
     }
 
@@ -45,12 +47,6 @@ public class LoginAcceptanceTest extends AcceptanceTest {
 
         ResponseEntity<String> response = template().postForEntity("/login", htmlRequest(gunju), String.class);
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
-    }
-
-    public HttpEntity<MultiValueMap<String, Object>> htmlRequest(User user) {
-        return urlEncodedForm().addParameter("userId", user.getUserId())
-                               .addParameter("password", user.getPassword())
-                               .build();
     }
 
 }
