@@ -43,7 +43,7 @@ public class UserService {
         }
         User user = userRepository.findByUserId(userId)
                                   .orElseThrow(UnAuthenticationException::new);
-        if (!user.getPassword().equals(password)) {
+        if (!user.matchPassword(password)) {
             throw new UnAuthenticationException();
         }
         return user;
