@@ -1,6 +1,5 @@
 package codesquad.web;
 
-import codesquad.InternalServerError;
 import codesquad.NotFoundException;
 import codesquad.UnAuthorizedException;
 import org.springframework.core.Ordered;
@@ -29,9 +28,9 @@ public class WebControllerAdvice {
         return createView(ex);
     }
 
-    @ExceptionHandler(InternalServerError.class)
+    @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ModelAndView handleInternalServerError(InternalServerError ex) {
+    public ModelAndView handleInternalServerError(RuntimeException ex) {
         return createView(ex);
     }
 
