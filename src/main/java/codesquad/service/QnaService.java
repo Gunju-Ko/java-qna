@@ -1,6 +1,7 @@
 package codesquad.service;
 
 import codesquad.CannotDeleteException;
+import codesquad.QuestionNotFoundException;
 import codesquad.domain.Answer;
 import codesquad.domain.AnswerRepository;
 import codesquad.domain.Question;
@@ -29,24 +30,32 @@ public class QnaService {
     @Resource(name = "deleteHistoryService")
     private DeleteHistoryService deleteHistoryService;
 
-    public Optional<Question> create(User loginUser, Question question) {
+    public Question create(User loginUser, Question question) {
         question.writeBy(loginUser);
         log.debug("question : {}", question);
-        return Optional.ofNullable(questionRepository.save(question));
+        return questionRepository.save(question);
     }
 
     public Optional<Question> findById(long id) {
         return Optional.ofNullable(questionRepository.findOne(id));
     }
 
-    public Optional<Question> update(User loginUser, long id, Question updatedQuestion) {
-        // TODO 수정 기능 구현
-        return Optional.empty();
+    @Transactional
+    public Question update(User loginUser, long id, Question updatedQuestion) {
+        Question question = questionRepository.findOne(id);
+        if (question == null) {
+            throw new QuestionNotFoundException();
+        }
+        return question.update(loginUser, updatedQuestion);
     }
 
     @Transactional
     public void deleteQuestion(User loginUser, long questionId) throws CannotDeleteException {
-        // TODO 삭제 기능 구현
+        Question question = questionRepository.findOne(questionId);
+        if (question == null) {
+            throw new QuestionNotFoundException();
+        }
+        question.delete(loginUser);
     }
 
     public Iterable<Question> findAll() {
@@ -66,8 +75,11 @@ public class QnaService {
         return null;
     }
 
-    public boolean checkAuthority(User loginUser, long id) {
-        // TODO 권한 기능 구현
-        return true;
+    public boolean isOwnerOfQuestion(User loginUser, long id) {
+        Question question = questionRepository.findOne(id);
+        if (question == null) {
+            throw new QuestionNotFoundException();
+        }
+        return question.isOwner(loginUser);
     }
 }

@@ -10,10 +10,10 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
 import support.test.AcceptanceTest;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 public class QuestionAcceptanceTest extends AcceptanceTest {
@@ -28,6 +28,7 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
     }
 
     @Test
+    @DirtiesContext
     public void create() throws Exception {
         QuestionDto questionDto = new QuestionDto("test", "test context");
 
@@ -71,7 +72,7 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
         User user = new User("sanjigi", "test", "산지기", "sanjigi@slipp.net");
 
         ResponseEntity<String> response = basicAuthTemplate(user).getForEntity("/questions/1/form", String.class);
-        assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
+        assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN));
     }
 
     @Test
@@ -81,6 +82,7 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
     }
 
     @Test
+    @DirtiesContext
     public void update() throws Exception {
         QuestionDto questionDto = new QuestionDto("update", "update test");
         ResponseEntity<String> response = basicAuthTemplate(defaultUser()).exchange("/questions/1",
@@ -92,7 +94,7 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
         Question question = repository.findOne(1L);
 
         assertThat(question.getTitle(), is("update"));
-        assertThat(question.getTitle(), is("update test"));
+        assertThat(question.getContents(), is("update test"));
     }
 
     @Test
@@ -104,17 +106,18 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
                                                                            htmlRequest(questionDto),
                                                                            String.class);
 
-        assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
+        assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN));
     }
 
     @Test
+    @DirtiesContext
     public void delete() throws Exception {
         ResponseEntity<String> response = basicAuthTemplate(defaultUser()).exchange("/questions/1", HttpMethod.DELETE,
                                                                                     HttpEntity.EMPTY, String.class);
 
         assertThat(response.getStatusCode(), is(HttpStatus.FOUND));
         Question question = repository.findOne(1L);
-        assertNull(question);
+        assertThat(question.isDeleted(), is(true));
     }
 
     @Test
@@ -122,6 +125,6 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
         User user = new User("sanjigi", "test", "산지기", "sanjigi@slipp.net");
         ResponseEntity<String> response = basicAuthTemplate(user).exchange("/questions/1", HttpMethod.DELETE,
                                                                            HttpEntity.EMPTY, String.class);
-        assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
+        assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN));
     }
 }

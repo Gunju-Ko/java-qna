@@ -1,8 +1,6 @@
 package codesquad.web;
 
-import codesquad.CannotCreateException;
 import codesquad.CannotDeleteException;
-import codesquad.CannotUpdateException;
 import codesquad.QuestionNotFoundException;
 import codesquad.UnAuthorizedException;
 import codesquad.domain.Question;
@@ -20,7 +18,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/questions")
@@ -39,7 +36,7 @@ public class QuestionsController {
 
     @GetMapping("/{id}/form")
     public String updateForm(@LoginUser User loginUser, @PathVariable long id, Model model) {
-        if (!qnaService.checkAuthority(loginUser, id)) {
+        if (!qnaService.isOwnerOfQuestion(loginUser, id)) {
             throw new UnAuthorizedException();
         }
         Question question = qnaService.findById(id)
@@ -61,8 +58,7 @@ public class QuestionsController {
     @PostMapping("")
     public String create(@LoginUser User loginUser,
                          @Valid QuestionDto questionDto) {
-        qnaService.create(loginUser, questionDto.toQuestion())
-                  .orElseThrow(CannotCreateException::new);
+        qnaService.create(loginUser, questionDto.toQuestion());
 
         return "redirect:/";
     }
@@ -83,8 +79,7 @@ public class QuestionsController {
     public String update(@LoginUser User loginUser,
                          @PathVariable long id,
                          QuestionDto questionDto) {
-        Optional<Question> question = qnaService.update(loginUser, id, questionDto.toQuestion());
-        return "redirect:" + question.orElseThrow(CannotUpdateException::new)
-                                     .generateUrl();
+        Question question = qnaService.update(loginUser, id, questionDto.toQuestion());
+        return "redirect:" + question.generateUrl();
     }
 }
