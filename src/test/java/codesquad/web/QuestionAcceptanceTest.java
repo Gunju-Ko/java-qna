@@ -56,7 +56,27 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
 
     @Test
     public void show_존재하지않는질문() throws Exception {
-        ResponseEntity<String> response = template().getForEntity("/questions/3", String.class);
+        ResponseEntity<String> response = template().getForEntity("/questions/10", String.class);
+        assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND));
+    }
+
+    @Test
+    public void updateForm() throws Exception {
+        ResponseEntity<String> response = basicAuthTemplate(defaultUser()).getForEntity("/questions/1/form", String.class);
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
+    }
+
+    @Test
+    public void updateForm_권한이없는사용자() throws Exception {
+        User user = new User("sanjigi", "test", "산지기", "sanjigi@slipp.net");
+
+        ResponseEntity<String> response = basicAuthTemplate(user).getForEntity("/questions/1/form", String.class);
+        assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
+    }
+
+    @Test
+    public void updateForm_존재하지않는질문() throws Exception {
+        ResponseEntity<String> response = basicAuthTemplate(defaultUser()).getForEntity("/questions/10/form", String.class);
         assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND));
     }
 

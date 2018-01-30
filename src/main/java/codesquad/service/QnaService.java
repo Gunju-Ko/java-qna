@@ -1,21 +1,20 @@
 package codesquad.service;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import codesquad.CannotDeleteException;
 import codesquad.domain.Answer;
 import codesquad.domain.AnswerRepository;
 import codesquad.domain.Question;
 import codesquad.domain.QuestionRepository;
 import codesquad.domain.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.Optional;
 
 @Service("qnaService")
 public class QnaService {
@@ -30,19 +29,19 @@ public class QnaService {
     @Resource(name = "deleteHistoryService")
     private DeleteHistoryService deleteHistoryService;
 
-    public Question create(User loginUser, Question question) {
+    public Optional<Question> create(User loginUser, Question question) {
         question.writeBy(loginUser);
         log.debug("question : {}", question);
-        return questionRepository.save(question);
+        return Optional.ofNullable(questionRepository.save(question));
     }
 
-    public Question findById(long id) {
-        return questionRepository.findOne(id);
+    public Optional<Question> findById(long id) {
+        return Optional.ofNullable(questionRepository.findOne(id));
     }
 
-    public Question update(User loginUser, long id, Question updatedQuestion) {
+    public Optional<Question> update(User loginUser, long id, Question updatedQuestion) {
         // TODO 수정 기능 구현
-        return null;
+        return Optional.empty();
     }
 
     @Transactional
@@ -65,5 +64,10 @@ public class QnaService {
     public Answer deleteAnswer(User loginUser, long id) {
         // TODO 답변 삭제 기능 구현 
         return null;
+    }
+
+    public boolean checkAuthority(User loginUser, long id) {
+        // TODO 권한 기능 구현
+        return true;
     }
 }
