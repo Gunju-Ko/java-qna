@@ -56,6 +56,12 @@ public class QnaServiceAcceptanceTest {
     }
 
     @Test
+    public void findByIdAndNotDeleted_삭제된Question() throws Exception {
+        Optional<Question> question = qnaService.findById(3L);
+        assertThat(question.isPresent()).isFalse();
+    }
+
+    @Test
     @DirtiesContext
     public void update() throws Exception {
         Question question = qnaService.update(user, 1, new Question("update", "update content"));
@@ -82,6 +88,11 @@ public class QnaServiceAcceptanceTest {
     @Test(expected = QuestionNotFoundException.class)
     public void update_해당Question이존재하지않는경우() throws Exception {
         qnaService.update(user, 10, new Question("update", "update content"));
+    }
+
+    @Test(expected = QuestionNotFoundException.class)
+    public void update_해당Question삭제된경우() throws Exception {
+        qnaService.update(user, 3, new Question("update", "update content"));
     }
 
     @Test

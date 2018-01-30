@@ -39,22 +39,28 @@ public class QnaService {
         return Optional.ofNullable(questionRepository.findOne(id));
     }
 
-    @Transactional
-    public Question update(User loginUser, long id, Question updatedQuestion) {
+    public Optional<Question> findByIdAndNotDeleted(long id) {
         Question question = questionRepository.findOne(id);
-        if (question == null) {
-            throw new QuestionNotFoundException();
+        if (question == null || question.isDeleted()) {
+            return Optional.empty();
         }
-        return question.update(loginUser, updatedQuestion);
+        return Optional.of(question);
     }
 
     @Transactional
-    public void deleteQuestion(User loginUser, long questionId) {
-        Question question = questionRepository.findOne(questionId);
-        if (question == null) {
-            throw new QuestionNotFoundException();
-        }
-        question.delete(loginUser);
+    public Question update(User loginUser, long id, Question updatedQuestion) {
+        Optional<Question> question = findByIdAndNotDeleted(id);
+
+        return question.orElseThrow(QuestionNotFoundException::new)
+                       .update(loginUser, updatedQuestion);
+    }
+
+    @Transactional
+    public void deleteQuestion(User loginUser, long id) {
+        Optional<Question> question = findByIdAndNotDeleted(id);
+
+        question.orElseThrow(QuestionNotFoundException::new)
+                .delete(loginUser);
     }
 
     public Iterable<Question> findAll() {

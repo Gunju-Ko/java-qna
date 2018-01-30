@@ -38,7 +38,7 @@ public class QuestionsController {
         if (!qnaService.isOwnerOfQuestion(loginUser, id)) {
             throw new UnAuthorizedException();
         }
-        Question question = qnaService.findById(id)
+        Question question = qnaService.findByIdAndNotDeleted(id)
                                       .orElseThrow(QuestionNotFoundException::new);
 
         model.addAttribute("question", question);
@@ -47,7 +47,7 @@ public class QuestionsController {
 
     @GetMapping("/{id}")
     public String show(@PathVariable long id, Model model) {
-        Question question = qnaService.findById(id)
+        Question question = qnaService.findByIdAndNotDeleted(id)
                                       .orElseThrow(QuestionNotFoundException::new);
 
         model.addAttribute("question", question);
