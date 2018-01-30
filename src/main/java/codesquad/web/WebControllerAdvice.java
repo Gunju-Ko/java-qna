@@ -19,24 +19,24 @@ public class WebControllerAdvice {
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ModelAndView handleNotFoundException(NotFoundException ex) {
-        return createView(ex);
+        return createView(ex.getMessage());
     }
 
     @ExceptionHandler(UnAuthorizedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ModelAndView handleUnAuthorizedException(UnAuthorizedException ex) {
-        return createView(ex);
+    public ModelAndView handleUnAuthorizedException() {
+        return createView("해당 권한이 없습니다");
     }
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ModelAndView handleInternalServerError(RuntimeException ex) {
-        return createView(ex);
+        return createView(ex.getLocalizedMessage());
     }
 
-    private ModelAndView createView(RuntimeException ex) {
+    private ModelAndView createView(String errorMessage) {
         ModelAndView mv = new ModelAndView("error");
-        mv.addObject("message", ex.getMessage());
+        mv.addObject("message", errorMessage);
 
         return mv;
     }

@@ -1,6 +1,5 @@
 package codesquad.service;
 
-import codesquad.CannotDeleteException;
 import codesquad.QuestionNotFoundException;
 import codesquad.UnAuthorizedException;
 import codesquad.domain.Question;
@@ -92,7 +91,7 @@ public class QnaServiceAcceptanceTest {
         assertThat(repository.findOne(1L).isDeleted()).isTrue();
     }
 
-    @Test(expected = CannotDeleteException.class)
+    @Test(expected = UnAuthorizedException.class)
     public void deleteQuestion_권한이없는경우() throws Exception {
         User user = new User(2, "sanjigi", "test", "산지기", "sanjigi@slipp.net");
         qnaService.deleteQuestion(user, 1);

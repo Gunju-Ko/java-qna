@@ -1,6 +1,5 @@
 package codesquad.service;
 
-import codesquad.CannotDeleteException;
 import codesquad.QuestionNotFoundException;
 import codesquad.domain.Answer;
 import codesquad.domain.AnswerRepository;
@@ -50,7 +49,7 @@ public class QnaService {
     }
 
     @Transactional
-    public void deleteQuestion(User loginUser, long questionId) throws CannotDeleteException {
+    public void deleteQuestion(User loginUser, long questionId) {
         Question question = questionRepository.findOne(questionId);
         if (question == null) {
             throw new QuestionNotFoundException();

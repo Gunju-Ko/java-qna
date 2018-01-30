@@ -1,6 +1,5 @@
 package codesquad.domain;
 
-import codesquad.CannotDeleteException;
 import codesquad.UnAuthorizedException;
 import codesquad.dto.QuestionDto;
 import org.hibernate.annotations.Where;
@@ -81,9 +80,9 @@ public class Question extends AbstractEntity implements UrlGeneratable {
         return deleted;
     }
 
-    public void delete(User loginUser) throws CannotDeleteException {
+    public void delete(User loginUser) {
         if (!isOwner(loginUser)) {
-            throw new CannotDeleteException("권한이없습니다");
+            throw new UnAuthorizedException("권한이없습니다");
         }
         this.deleted = true;
     }
