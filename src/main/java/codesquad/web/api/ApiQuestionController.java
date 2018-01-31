@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.net.URI;
 
 @RestController
 @RequestMapping("/api/questions")
@@ -42,10 +41,7 @@ public class ApiQuestionController {
     public ResponseEntity<Void> create(@LoginUser User loginUser,
                                        @RequestBody @Valid QuestionDto questionDto) {
         Question question = qnaService.create(loginUser, questionDto.toQuestion());
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create("/api/questions/" + question.getId()));
-
-        return new ResponseEntity<>(headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(makeHttpHeaders(question), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
@@ -53,10 +49,7 @@ public class ApiQuestionController {
                                        @PathVariable long id,
                                        @RequestBody @Valid QuestionDto questionDto) {
         Question question = qnaService.update(loginUser, id, questionDto.toQuestion());
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create("/api/questions/" + question.getId()));
-
-        return new ResponseEntity<>(headers, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(makeHttpHeaders(question), HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping("/{id}")
@@ -66,5 +59,12 @@ public class ApiQuestionController {
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                              .build();
+    }
+
+    private HttpHeaders makeHttpHeaders(Question question) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(question.generateApiUri());
+
+        return headers;
     }
 }
