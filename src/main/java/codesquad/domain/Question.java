@@ -70,8 +70,8 @@ public class Question extends AbstractEntity implements UrlGeneratable {
     }
 
     public boolean isOwner(User loginUser) {
-        if (loginUser == null) {
-            throw new IllegalArgumentException();
+        if (this.writer == null) {
+            throw new IllegalStateException();
         }
         return writer.equals(loginUser);
     }

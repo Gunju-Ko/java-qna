@@ -37,18 +37,24 @@ public class QuestionTest {
         assertThat(question.isOwner(new User(3, "gunju", "test", "고건주", "gunju@slipp.net"))).isFalse();
     }
 
-    @Test
-    public void update() throws Exception {
-        Question updatedQuestion = new Question("update", "update test");
-        question.update(defaultUser, updatedQuestion);
-        assertThat(question.getTitle()).isEqualTo(updatedQuestion.getTitle());
-        assertThat(question.getContents()).isEqualTo(updatedQuestion.getContents());
+    private static boolean compareTitleAndContents(Question o1, Question o2) {
+        if (o1 == null || o2 == null) {
+            return false;
+        }
+        return o1.getTitle().equals(o2.getTitle()) && o1.getContents().equals(o2.getContents());
     }
 
     @Test(expected = UnAuthorizedException.class)
     public void update_권한이없는유저() throws Exception {
         User user = new User(3, "gunju", "test", "고건주", "gunju@slipp.net");
         question.update(user, new Question("test", "test"));
+    }
+
+    @Test
+    public void update() throws Exception {
+        Question updatedQuestion = new Question("update", "update test");
+        question.update(defaultUser, updatedQuestion);
+        assertThat(compareTitleAndContents(question, updatedQuestion)).isTrue();
     }
 
 }

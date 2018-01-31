@@ -65,11 +65,12 @@ public class QnaServiceAcceptanceTest {
     @DirtiesContext
     public void update() throws Exception {
         Question question = qnaService.update(user, 1, new Question("update", "update content"));
-
         assertThat(question).isNotNull();
-        assertThat(repository.findOne(question.getId())).isNotNull();
-        assertThat(repository.findOne(question.getId()).getTitle()).isEqualTo("update");
-        assertThat(repository.findOne(question.getId()).getContents()).isEqualTo("update content");
+
+        Question dbQuestion = repository.findOne(question.getId());
+        assertThat(dbQuestion).isNotNull();
+        assertThat(dbQuestion.getTitle()).isEqualTo("update");
+        assertThat(dbQuestion.getContents()).isEqualTo("update content");
 
     }
 
@@ -79,7 +80,7 @@ public class QnaServiceAcceptanceTest {
         qnaService.update(user, 1, new Question("update", "update content"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = UnAuthorizedException.class)
     public void update_파라미터가NULL인경우() throws Exception {
         qnaService.update(null, 1, new Question("update", "update content"));
 
@@ -108,7 +109,7 @@ public class QnaServiceAcceptanceTest {
         qnaService.deleteQuestion(user, 1);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = UnAuthorizedException.class)
     public void deleteQuestion_파라미터가NULL인경우() throws Exception {
         qnaService.deleteQuestion(null, 1);
     }
@@ -124,8 +125,8 @@ public class QnaServiceAcceptanceTest {
         assertThat(qnaService.isOwnerOfQuestion(user, 2)).isFalse();
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void checkAuthority_파라미터가NULL인경우() throws Exception {
-        qnaService.isOwnerOfQuestion(null, 1);
+        assertThat(qnaService.isOwnerOfQuestion(null, 1)).isFalse();
     }
 }
