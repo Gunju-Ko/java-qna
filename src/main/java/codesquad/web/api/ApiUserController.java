@@ -1,10 +1,9 @@
-package codesquad.web;
+package codesquad.web.api;
 
-import java.net.URI;
-
-import javax.annotation.Resource;
-import javax.validation.Valid;
-
+import codesquad.domain.User;
+import codesquad.dto.UserDto;
+import codesquad.security.LoginUser;
+import codesquad.service.UserService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import codesquad.domain.User;
-import codesquad.dto.UserDto;
-import codesquad.security.LoginUser;
-import codesquad.service.UserService;
+import javax.annotation.Resource;
+import javax.validation.Valid;
+import java.net.URI;
 
 @RestController
 @RequestMapping("/api/users")

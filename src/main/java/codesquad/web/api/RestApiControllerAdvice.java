@@ -1,4 +1,4 @@
-package codesquad.web;
+package codesquad.web.api;
 
 import codesquad.CustomException;
 import codesquad.UnAuthorizedException;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice(basePackages = "codesquad.web",
+@RestControllerAdvice(basePackages = "codesquad.web.api",
                       annotations = RestController.class)
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class RestApiControllerAdvice {
