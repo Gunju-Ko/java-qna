@@ -51,7 +51,7 @@ public class QnaService {
     public Question update(User loginUser, long id, Question updatedQuestion) {
         Optional<Question> question = findByIdAndNotDeleted(id);
 
-        return question.orElseThrow(QuestionNotFoundException::new)
+        return question.orElseThrow(() -> new QuestionNotFoundException(id))
                        .update(loginUser, updatedQuestion);
     }
 
@@ -59,7 +59,7 @@ public class QnaService {
     public void deleteQuestion(User loginUser, long id) {
         Optional<Question> question = findByIdAndNotDeleted(id);
 
-        question.orElseThrow(QuestionNotFoundException::new)
+        question.orElseThrow(() -> new QuestionNotFoundException(id))
                 .delete(loginUser);
     }
 
@@ -83,7 +83,7 @@ public class QnaService {
     public boolean isOwnerOfQuestion(User loginUser, long id) {
         Question question = questionRepository.findOne(id);
         if (question == null) {
-            throw new QuestionNotFoundException();
+            throw new QuestionNotFoundException(id);
         }
         return question.isOwner(loginUser);
     }

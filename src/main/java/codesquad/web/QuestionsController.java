@@ -39,7 +39,7 @@ public class QuestionsController {
             throw new UnAuthorizedException();
         }
         Question question = qnaService.findByIdAndNotDeleted(id)
-                                      .orElseThrow(QuestionNotFoundException::new);
+                                      .orElseThrow(() -> new QuestionNotFoundException(id));
 
         model.addAttribute("question", question);
         return "/qna/updateForm";
@@ -48,7 +48,7 @@ public class QuestionsController {
     @GetMapping("/{id}")
     public String show(@PathVariable long id, Model model) {
         Question question = qnaService.findByIdAndNotDeleted(id)
-                                      .orElseThrow(QuestionNotFoundException::new);
+                                      .orElseThrow(() -> new QuestionNotFoundException(id));
 
         model.addAttribute("question", question);
         return "/qna/show";
