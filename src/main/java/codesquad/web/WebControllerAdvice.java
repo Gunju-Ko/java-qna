@@ -26,7 +26,7 @@ public class WebControllerAdvice {
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ModelAndView handleNotFoundException(NotFoundException ex) {
-        return createView(getErrorMessage(ex));
+        return createView(getCustomErrorMessage(ex));
     }
 
     @ExceptionHandler(UnAuthorizedException.class)
@@ -48,7 +48,7 @@ public class WebControllerAdvice {
         return mv;
     }
 
-    private String getErrorMessage(CustomException e) {
+    private String getCustomErrorMessage(CustomException e) {
         return accessor.getMessage(e.getMessageCode(), e.getArguments(), e.getMessage());
     }
 }

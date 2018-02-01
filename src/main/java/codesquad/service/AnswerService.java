@@ -1,7 +1,6 @@
 package codesquad.service;
 
 import codesquad.AnswerNotFoundException;
-import codesquad.QuestionNotFoundException;
 import codesquad.domain.Answer;
 import codesquad.domain.AnswerRepository;
 import codesquad.domain.Question;
@@ -39,18 +38,18 @@ public class AnswerService {
 
     @Transactional
     public Answer update(long id, Answer updateAnswer) {
-        Answer answer = findByIdAndDeleted(id, false).orElseThrow(AnswerNotFoundException::new);
+        Answer answer = findByIdAndDeleted(id, false).orElseThrow(() -> new AnswerNotFoundException(id));
         return answer.update(updateAnswer);
     }
 
     @Transactional
     public void delete(User loginUser, long id) {
-        Answer answer = findByIdAndDeleted(id, false).orElseThrow(AnswerNotFoundException::new);
+        Answer answer = findByIdAndDeleted(id, false).orElseThrow(() -> new AnswerNotFoundException(id));
         answer.delete(loginUser);
     }
 
     public boolean isOwnerOfAnswer(User loginUser, long id) {
         return findByIdAndDeleted(id, false).map(a -> a.isOwner(loginUser))
-                                            .orElseThrow(QuestionNotFoundException::new);
+                                            .orElseThrow(() -> new AnswerNotFoundException(id));
     }
 }

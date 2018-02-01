@@ -37,7 +37,7 @@ public class ApiAnswerController {
     public AnswerDto show(@PathVariable("questionId") @NotNull Question question,
                           @PathVariable long id) {
         return answerService.findByIdAndQuestion(id, question)
-                            .orElseThrow(AnswerNotFoundException::new)
+                            .orElseThrow(() -> new AnswerNotFoundException(id))
                             .toAnswerDto();
     }
 

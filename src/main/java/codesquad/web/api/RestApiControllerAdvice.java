@@ -28,7 +28,7 @@ public class RestApiControllerAdvice {
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
         return ResponseEntity.status(e.status())
-                             .body(new ErrorResponse(e.status(), getErrorMessage(e)));
+                             .body(new ErrorResponse(e.status(), getCustomErrorMessage(e)));
     }
 
     @ExceptionHandler(UnAuthorizedException.class)
@@ -49,7 +49,7 @@ public class RestApiControllerAdvice {
         return new ErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
-    private String getErrorMessage(CustomException e) {
+    private String getCustomErrorMessage(CustomException e) {
         return accessor.getMessage(e.getMessageCode(), e.getArguments(), e.getMessage());
     }
 }

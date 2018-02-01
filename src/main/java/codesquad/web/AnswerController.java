@@ -2,12 +2,14 @@ package codesquad.web;
 
 import codesquad.AnswerNotFoundException;
 import codesquad.UnAuthorizedException;
+import codesquad.domain.Answer;
 import codesquad.domain.Question;
 import codesquad.domain.User;
 import codesquad.dto.AnswerDto;
 import codesquad.security.LoginUser;
 import codesquad.service.AnswerService;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,13 +35,15 @@ public class AnswerController {
     @GetMapping("/{id}/form")
     public String showForm(@LoginUser User loginUser,
                            @PathVariable("questionId") @NotNull Question question,
-                           @PathVariable long id) {
+                           @PathVariable long id,
+                           Model model) {
         if (!answerService.isOwnerOfAnswer(loginUser, id)) {
             throw new UnAuthorizedException();
         }
-        answerService.findByIdAndQuestion(id, question)
-                     .orElseThrow(AnswerNotFoundException::new);
-        return "redirect:/questions/" + question.getId();
+        Answer answer = answerService.findByIdAndQuestion(id, question)
+                                     .orElseThrow(() -> new AnswerNotFoundException(id));
+        model.addAttribute("answer", answer);
+        return "/qna/answerUpdateForm";
     }
 
     @PostMapping("")

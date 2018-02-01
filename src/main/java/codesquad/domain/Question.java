@@ -67,6 +67,10 @@ public class Question extends AbstractEntity implements UrlGeneratable, ApiUrlGe
         return Collections.unmodifiableList(answers);
     }
 
+    public int getCountOfAnswers() {
+        return answers.size();
+    }
+
     public void writeBy(User loginUser) {
         this.writer = loginUser;
     }

@@ -3,7 +3,7 @@
     <div class="col-md-12 col-sm-12 col-lg-10 col-lg-offset-1">
         <div class="panel panel-default content-main">
             {{# answer }}
-            <form name="question" method="post" action="/questions/{{question.id}}/answers/{{id}}">
+            <form name="answer" method="post" action="/questions/{{question.id}}/answers/{{id}}">
                 <input type="hidden" name="_method" value="put"/>
                 <div class="form-group">
                     <label for="contents">내용</label>
