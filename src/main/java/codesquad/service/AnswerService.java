@@ -27,12 +27,13 @@ public class AnswerService {
         return Optional.ofNullable(repository.findByIdAndDeleted(id, deleted));
     }
 
+    @Transactional
     public Answer create(Answer answer, Question question) {
         if (question == null || answer == null) {
             throw new IllegalArgumentException();
         }
-        answer.toQuestion(question);
-        return repository.save(answer);
+        question.addAnswer(answer);
+        return answer;
     }
 
     @Transactional

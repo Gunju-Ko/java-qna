@@ -19,6 +19,7 @@ import javax.persistence.OrderBy;
 import javax.validation.constraints.Size;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -60,6 +61,10 @@ public class Question extends AbstractEntity implements UrlGeneratable, ApiUrlGe
 
     public User getWriter() {
         return writer;
+    }
+
+    public List<Answer> getAnswers() {
+        return Collections.unmodifiableList(answers);
     }
 
     public void writeBy(User loginUser) {
