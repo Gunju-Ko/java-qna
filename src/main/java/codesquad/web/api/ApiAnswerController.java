@@ -7,7 +7,6 @@ import codesquad.domain.User;
 import codesquad.dto.AnswerDto;
 import codesquad.security.LoginUser;
 import codesquad.service.AnswerService;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -46,8 +45,8 @@ public class ApiAnswerController {
     public ResponseEntity<Void> create(@LoginUser User loginUser,
                                        @PathVariable("questionId") @NotNull Question question,
                                        @RequestBody @Valid AnswerDto answerDto) {
-        Answer answer = answerService.create(answerDto.toAnswer(), loginUser, question);
-        return new ResponseEntity<>(makeHttpHeaders(answer), HttpStatus.CREATED);
+        Answer answer = answerService.create(answerDto.toAnswer(loginUser), question);
+        return new ResponseEntity<>(answer.makeHttpHeaders(), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
@@ -55,29 +54,23 @@ public class ApiAnswerController {
                                        @PathVariable("questionId") @NotNull Question question,
                                        @PathVariable long id,
                                        @RequestBody @Valid AnswerDto answerDto) {
-        answerService.findByIdAndQuestion(id, question)
-                     .orElseThrow(AnswerNotFoundException::new);
-        Answer answer = answerService.update(loginUser, id, answerDto.toAnswer());
-
-        return new ResponseEntity<>(makeHttpHeaders(answer), HttpStatus.NO_CONTENT);
+        if (!question.containAnswer(id)) {
+            throw new AnswerNotFoundException(id);
+        }
+        Answer answer = answerService.update(id, answerDto.toAnswer(loginUser));
+        return new ResponseEntity<>(answer.makeHttpHeaders(), HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@LoginUser User loginUser,
                                        @PathVariable("questionId") @NotNull Question question,
                                        @PathVariable long id) {
-        answerService.findByIdAndQuestion(id, question)
-                     .orElseThrow(AnswerNotFoundException::new);
+        if (!question.containAnswer(id)) {
+            throw new AnswerNotFoundException(id);
+        }
         answerService.delete(loginUser, id);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                              .build();
-    }
-
-    private HttpHeaders makeHttpHeaders(Answer answer) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(answer.generateApiUri());
-
-        return headers;
     }
 }

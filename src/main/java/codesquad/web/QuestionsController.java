@@ -6,7 +6,7 @@ import codesquad.domain.Question;
 import codesquad.domain.User;
 import codesquad.dto.QuestionDto;
 import codesquad.security.LoginUser;
-import codesquad.service.QnaService;
+import codesquad.service.QuestionService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,10 +22,10 @@ import javax.validation.Valid;
 @RequestMapping("/questions")
 public class QuestionsController {
 
-    private final QnaService qnaService;
+    private final QuestionService questionService;
 
-    public QuestionsController(QnaService qnaService) {
-        this.qnaService = qnaService;
+    public QuestionsController(QuestionService questionService) {
+        this.questionService = questionService;
     }
 
     @GetMapping("/form")
@@ -35,11 +35,11 @@ public class QuestionsController {
 
     @GetMapping("/{id}/form")
     public String updateForm(@LoginUser User loginUser, @PathVariable long id, Model model) {
-        if (!qnaService.isOwnerOfQuestion(loginUser, id)) {
+        if (!questionService.isOwnerOfQuestion(loginUser, id)) {
             throw new UnAuthorizedException();
         }
-        Question question = qnaService.findByIdAndNotDeleted(id)
-                                      .orElseThrow(() -> new QuestionNotFoundException(id));
+        Question question = questionService.findByIdAndNotDeleted(id)
+                                           .orElseThrow(() -> new QuestionNotFoundException(id));
 
         model.addAttribute("question", question);
         return "/qna/updateForm";
@@ -47,8 +47,8 @@ public class QuestionsController {
 
     @GetMapping("/{id}")
     public String show(@PathVariable long id, Model model) {
-        Question question = qnaService.findByIdAndNotDeleted(id)
-                                      .orElseThrow(() -> new QuestionNotFoundException(id));
+        Question question = questionService.findByIdAndNotDeleted(id)
+                                           .orElseThrow(() -> new QuestionNotFoundException(id));
 
         model.addAttribute("question", question);
         return "/qna/show";
@@ -57,7 +57,7 @@ public class QuestionsController {
     @PostMapping("")
     public String create(@LoginUser User loginUser,
                          @Valid QuestionDto questionDto) {
-        qnaService.create(loginUser, questionDto.toQuestion());
+        questionService.create(loginUser, questionDto.toQuestion());
 
         return "redirect:/";
     }
@@ -65,7 +65,7 @@ public class QuestionsController {
     @DeleteMapping("/{id}")
     public String delete(@LoginUser User loginUser,
                          @PathVariable long id) {
-        qnaService.deleteQuestion(loginUser, id);
+        questionService.deleteQuestion(loginUser, id);
 
         return "redirect:/";
     }
@@ -74,7 +74,7 @@ public class QuestionsController {
     public String update(@LoginUser User loginUser,
                          @PathVariable long id,
                          @Valid QuestionDto questionDto) {
-        Question question = qnaService.update(loginUser, id, questionDto.toQuestion());
+        Question question = questionService.update(loginUser, id, questionDto.toQuestion());
         return "redirect:" + question.generateUrl();
     }
 }

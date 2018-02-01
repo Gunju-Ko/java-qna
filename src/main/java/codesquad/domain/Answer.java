@@ -1,5 +1,6 @@
 package codesquad.domain;
 
+import codesquad.UnAuthorizedException;
 import codesquad.dto.AnswerDto;
 import support.domain.AbstractEntity;
 import support.domain.ApiUrlGeneratable;
@@ -70,7 +71,27 @@ public class Answer extends AbstractEntity implements UrlGeneratable, ApiUrlGene
     }
 
     public AnswerDto toAnswerDto() {
-        return new AnswerDto(getId(), contents, writer.toUserDto());
+        return new AnswerDto(getId(), contents);
+    }
+
+    public URI generateApiUri() {
+        String apiUri = String.format("/api/questions/%d/answers/%d", question.getId(), getId());
+        return URI.create(apiUri);
+    }
+
+    public Answer update(Answer updateAnswer) {
+        if (!isOwner(updateAnswer.writer)) {
+            throw new UnAuthorizedException();
+        }
+        this.contents = updateAnswer.contents;
+        return this;
+    }
+
+    public void delete(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new UnAuthorizedException();
+        }
+        this.deleted = true;
     }
 
     @Override
@@ -81,9 +102,5 @@ public class Answer extends AbstractEntity implements UrlGeneratable, ApiUrlGene
     @Override
     public String toString() {
         return "Answer [id=" + getId() + ", writer=" + writer + ", contents=" + contents + "]";
-    }
-
-    public URI generateApiUri() {
-        return null;
     }
 }

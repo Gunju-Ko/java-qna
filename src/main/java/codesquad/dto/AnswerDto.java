@@ -1,6 +1,7 @@
 package codesquad.dto;
 
 import codesquad.domain.Answer;
+import codesquad.domain.User;
 
 import javax.validation.constraints.Size;
 
@@ -11,15 +12,12 @@ public class AnswerDto {
     @Size(min = 5)
     private String contents;
 
-    private UserDto userDto;
-
     public AnswerDto() {
     }
 
-    public AnswerDto(long id, String contents, UserDto userDto) {
+    public AnswerDto(long id, String contents) {
         this.id = id;
         this.contents = contents;
-        this.userDto = userDto;
     }
 
     public AnswerDto(String contents) {
@@ -34,11 +32,7 @@ public class AnswerDto {
         return contents;
     }
 
-    public UserDto getUserDto() {
-        return userDto;
-    }
-
-    public Answer toAnswer() {
-        return null;
+    public Answer toAnswer(User writer) {
+        return new Answer(writer, this.contents);
     }
 }

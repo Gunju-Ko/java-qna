@@ -102,6 +102,11 @@ public class Question extends AbstractEntity implements UrlGeneratable, ApiUrlGe
         return new QuestionDto(getId(), this.title, this.contents);
     }
 
+    public boolean containAnswer(long id) {
+        return answers.stream()
+                      .anyMatch(answer -> answer.getId() == id);
+    }
+
     @Override
     public String generateUrl() {
         return String.format("/questions/%d", getId());

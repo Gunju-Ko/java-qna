@@ -1,8 +1,6 @@
 package codesquad.service;
 
 import codesquad.QuestionNotFoundException;
-import codesquad.domain.Answer;
-import codesquad.domain.AnswerRepository;
 import codesquad.domain.Question;
 import codesquad.domain.QuestionRepository;
 import codesquad.domain.User;
@@ -17,14 +15,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service("qnaService")
-public class QnaService {
-    private static final Logger log = LoggerFactory.getLogger(QnaService.class);
+public class QuestionService {
+    private static final Logger log = LoggerFactory.getLogger(QuestionService.class);
 
     @Resource(name = "questionRepository")
     private QuestionRepository questionRepository;
-
-    @Resource(name = "answerRepository")
-    private AnswerRepository answerRepository;
 
     @Resource(name = "deleteHistoryService")
     private DeleteHistoryService deleteHistoryService;
@@ -69,15 +64,6 @@ public class QnaService {
 
     public List<Question> findAll(Pageable pageable) {
         return questionRepository.findAll(pageable).getContent();
-    }
-
-    public Answer addAnswer(User loginUser, long questionId, String contents) {
-        return null;
-    }
-
-    public Answer deleteAnswer(User loginUser, long id) {
-        // TODO 답변 삭제 기능 구현 
-        return null;
     }
 
     public boolean isOwnerOfQuestion(User loginUser, long id) {

@@ -14,13 +14,6 @@ public class ApiAnswerAcceptanceTest extends AcceptanceTest {
 
     private AnswerDto answerDto;
 
-    private static boolean compareAnswerDto(AnswerDto answerDto, AnswerDto dbAnswer) {
-        if (answerDto == null || dbAnswer == null) {
-            return false;
-        }
-        return answerDto.getContents().equals(dbAnswer.getContents());
-    }
-
     @Before
     public void setUp() throws Exception {
         answerDto = new AnswerDto("질문에 대한 답변입니다");
@@ -94,15 +87,11 @@ public class ApiAnswerAcceptanceTest extends AcceptanceTest {
         assertThat(compareAnswerDto(updateAnswer, dbAnswer)).isFalse();
     }
 
-    @Test
-    @DirtiesContext
-    public void update_권한이없는사용자() throws Exception {
-        AnswerDto updateAnswer = new AnswerDto("업데이트된 내용");
-        String location = createResource("/api/questions/1/answers", answerDto, defaultUser());
-        basicAuthTemplate(findByUserId("snajigi")).put(location, updateAnswer);
-
-        AnswerDto dbAnswer = getResource(location, AnswerDto.class);
-        assertThat(compareAnswerDto(answerDto, dbAnswer)).isTrue();
+    private static boolean compareAnswerDto(AnswerDto answerDto, AnswerDto dbAnswer) {
+        if (answerDto == null || dbAnswer == null) {
+            return false;
+        }
+        return answerDto.getContents().equals(dbAnswer.getContents());
     }
 
     @Test
@@ -132,5 +121,16 @@ public class ApiAnswerAcceptanceTest extends AcceptanceTest {
 
         ResponseEntity<AnswerDto> response = template().getForEntity(location, AnswerDto.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    @DirtiesContext
+    public void update_권한이없는사용자() throws Exception {
+        AnswerDto updateAnswer = new AnswerDto("업데이트된 내용");
+        String location = createResource("/api/questions/1/answers", answerDto, defaultUser());
+        basicAuthTemplate(findByUserId("sanjigi")).put(location, updateAnswer);
+
+        AnswerDto dbAnswer = getResource(location, AnswerDto.class);
+        assertThat(compareAnswerDto(answerDto, dbAnswer)).isTrue();
     }
 }
