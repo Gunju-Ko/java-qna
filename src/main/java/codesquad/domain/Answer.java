@@ -1,17 +1,20 @@
 package codesquad.domain;
 
+import codesquad.dto.AnswerDto;
+import support.domain.AbstractEntity;
+import support.domain.ApiUrlGeneratable;
+import support.domain.UrlGeneratable;
+
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.Size;
-
-import support.domain.AbstractEntity;
-import support.domain.UrlGeneratable;
+import java.net.URI;
 
 @Entity
-public class Answer extends AbstractEntity implements UrlGeneratable {
+public class Answer extends AbstractEntity implements UrlGeneratable, ApiUrlGeneratable {
     @ManyToOne
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_writer"))
     private User writer;
@@ -66,6 +69,10 @@ public class Answer extends AbstractEntity implements UrlGeneratable {
         return deleted;
     }
 
+    public AnswerDto toAnswerDto() {
+        return new AnswerDto(getId(), contents, writer.toUserDto());
+    }
+
     @Override
     public String generateUrl() {
         return String.format("%s/answers/%d", question.generateUrl(), getId());
@@ -74,5 +81,9 @@ public class Answer extends AbstractEntity implements UrlGeneratable {
     @Override
     public String toString() {
         return "Answer [id=" + getId() + ", writer=" + writer + ", contents=" + contents + "]";
+    }
+
+    public URI generateApiUri() {
+        return null;
     }
 }

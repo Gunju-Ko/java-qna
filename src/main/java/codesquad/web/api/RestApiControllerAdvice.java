@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.validation.ConstraintViolationException;
+
 @RestControllerAdvice(basePackages = "codesquad.web.api",
                       annotations = RestController.class)
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -39,6 +41,12 @@ public class RestApiControllerAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleInternalServerError(RuntimeException ex) {
         return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handlerConstraintViolationException(ConstraintViolationException ex) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
     private String getErrorMessage(CustomException e) {
