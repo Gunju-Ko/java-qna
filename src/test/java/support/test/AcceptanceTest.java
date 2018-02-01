@@ -2,6 +2,7 @@ package support.test;
 
 import codesquad.domain.User;
 import codesquad.domain.UserRepository;
+import codesquad.dto.AnswerDto;
 import codesquad.dto.QuestionDto;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +84,11 @@ public abstract class AcceptanceTest {
     protected HttpEntity<MultiValueMap<String, Object>> htmlRequest(QuestionDto question) {
         return urlEncodedForm().addParameter("title", question.getTitle())
                                .addParameter("contents", question.getContents())
+                               .build();
+    }
+
+    protected HttpEntity<MultiValueMap<String, Object>> htmlRequest(AnswerDto question) {
+        return urlEncodedForm().addParameter("contents", question.getContents())
                                .build();
     }
 }

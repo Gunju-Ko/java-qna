@@ -112,6 +112,12 @@ public class Question extends AbstractEntity implements UrlGeneratable, ApiUrlGe
                       .anyMatch(answer -> answer.getId() == id);
     }
 
+    void deleteAnswer(Answer answer) {
+        if (!answers.remove(answer)) {
+            throw new IllegalStateException();
+        }
+    }
+
     @Override
     public String generateUrl() {
         return String.format("/questions/%d", getId());

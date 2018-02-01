@@ -32,6 +32,14 @@ public class AnswerDto {
         return contents;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setContents(String contents) {
+        this.contents = contents;
+    }
+
     public Answer toAnswer(User writer) {
         return new Answer(writer, this.contents);
     }

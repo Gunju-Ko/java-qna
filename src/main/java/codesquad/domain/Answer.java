@@ -92,6 +92,7 @@ public class Answer extends AbstractEntity implements UrlGeneratable, ApiUrlGene
             throw new UnAuthorizedException();
         }
         this.deleted = true;
+        this.question.deleteAnswer(this);
     }
 
     @Override

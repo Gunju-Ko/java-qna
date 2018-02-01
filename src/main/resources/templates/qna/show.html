@@ -68,8 +68,8 @@
                                              href="/questions/{{question.id}}/answers/{{id}}/form">수정</a>
                                       </li>
                                       <li>
-                                          <form class="delete-answer-form"
-                                                action="/api/questions/{{question.id}}/answers/{{id}}" method="DELETE">
+                                          <form class="delete-answer-form" method="POST"
+                                                action="/questions/{{question.id}}/answers/{{id}}">
                                               <input type="hidden" name="_method" value="DELETE">
                                               <button type="submit" class="delete-answer-button">삭제</button>
                                           </form>
@@ -79,10 +79,11 @@
                           </article>
                           {{/ answers }}
 
-                          <form class="submit-write" action="/api/questions/{{id}}/answers">
+                          <form class="submit-write" method="post" action="/questions/{{id}}/answers">
                               <div class="form-group" style="padding:14px;">
-                                  <textarea name="contents" class="form-control"
-                                            placeholder="Update your status"></textarea>
+                                  <label for="contents">내용</label>
+                                  <textarea id="contents" name="contents" class="form-control"
+                                            placeholder="답변을 입력해주세요"></textarea>
                               </div>
                               <button class="btn btn-success pull-right" type="submit">답변하기</button>
                               <div class="clearfix" />
