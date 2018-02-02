@@ -28,12 +28,6 @@ public class ApiAnswerAcceptanceTest extends AcceptanceTest {
     }
 
     @Test
-    public void show_존재하지않는질문() throws Exception {
-        ResponseEntity<AnswerDto> response = template().getForEntity("/api/questions/10/answers/1", AnswerDto.class);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    }
-
-    @Test
     public void show_존재하지않는답변() throws Exception {
         ResponseEntity<AnswerDto> response = template().getForEntity("/api/questions/1/answers/10", AnswerDto.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -78,15 +72,6 @@ public class ApiAnswerAcceptanceTest extends AcceptanceTest {
         assertThat(compareAnswerDto(answerDto, dbAnswer)).isTrue();
     }
 
-    @Test
-    public void update_잘못된경로() throws Exception {
-        AnswerDto updateAnswer = new AnswerDto("업데이트된 내용");
-        basicAuthTemplate(defaultUser()).put("/api/questions/10/answers/1", updateAnswer);
-
-        AnswerDto dbAnswer = getResource("/api/questions/1/answers/1", AnswerDto.class);
-        assertThat(compareAnswerDto(updateAnswer, dbAnswer)).isFalse();
-    }
-
     private static boolean compareAnswerDto(AnswerDto answerDto, AnswerDto dbAnswer) {
         if (answerDto == null || dbAnswer == null) {
             return false;
@@ -102,15 +87,6 @@ public class ApiAnswerAcceptanceTest extends AcceptanceTest {
         ResponseEntity<ErrorResponse> response = template().getForEntity(location, ErrorResponse.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         assertThat(response.getBody().getStatus()).isEqualTo(HttpStatus.NOT_FOUND);
-    }
-
-    @Test
-    public void delete_잘못된경로() throws Exception {
-        deleteResource("/api/questions/10/answers/1", defaultUser());
-        ResponseEntity<AnswerDto> response = template().getForEntity("/api/questions/1/answers/1", AnswerDto.class);
-
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody().getId()).isEqualTo(1);
     }
 
     @Test

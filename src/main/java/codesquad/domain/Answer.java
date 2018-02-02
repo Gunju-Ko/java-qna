@@ -75,7 +75,7 @@ public class Answer extends AbstractEntity implements UrlGeneratable, ApiUrlGene
     }
 
     public URI generateApiUri() {
-        String apiUri = String.format("/api/questions/%d/answers/%d", question.getId(), getId());
+        String apiUri = "/api" + generateUrl();
         return URI.create(apiUri);
     }
 
@@ -93,6 +93,12 @@ public class Answer extends AbstractEntity implements UrlGeneratable, ApiUrlGene
         }
         this.deleted = true;
         this.question.deleteAnswer(this);
+    }
+
+    public void checkAuthority(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new UnAuthorizedException();
+        }
     }
 
     @Override

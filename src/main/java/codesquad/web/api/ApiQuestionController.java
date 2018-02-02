@@ -1,11 +1,10 @@
 package codesquad.web.api;
 
-import codesquad.QuestionNotFoundException;
 import codesquad.domain.Question;
 import codesquad.domain.User;
 import codesquad.dto.QuestionDto;
 import codesquad.security.LoginUser;
-import codesquad.service.QuestionService;
+import codesquad.service.QnaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,23 +22,22 @@ import javax.validation.Valid;
 @RequestMapping("/api/questions")
 public class ApiQuestionController {
 
-    private final QuestionService questionService;
+    private final QnaService qnaService;
 
-    public ApiQuestionController(QuestionService questionService) {
-        this.questionService = questionService;
+    public ApiQuestionController(QnaService qnaService) {
+        this.qnaService = qnaService;
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<QuestionDto> show(@PathVariable long id) {
-        Question question = questionService.findByIdAndNotDeleted(id)
-                                           .orElseThrow(() -> new QuestionNotFoundException(id));
+        Question question = qnaService.findQuestionByIdAndNotDeleted(id);
         return ResponseEntity.ok(question.toQuestionDto());
     }
 
     @PostMapping("")
     public ResponseEntity<Void> create(@LoginUser User loginUser,
                                        @RequestBody @Valid QuestionDto questionDto) {
-        Question question = questionService.create(loginUser, questionDto.toQuestion());
+        Question question = qnaService.create(loginUser, questionDto.toQuestion());
         return new ResponseEntity<>(question.makeHttpHeaders(), HttpStatus.CREATED);
     }
 
@@ -47,14 +45,14 @@ public class ApiQuestionController {
     public ResponseEntity<Void> update(@LoginUser User loginUser,
                                        @PathVariable long id,
                                        @RequestBody @Valid QuestionDto questionDto) {
-        Question question = questionService.update(loginUser, id, questionDto.toQuestion());
+        Question question = qnaService.update(loginUser, id, questionDto.toQuestion());
         return new ResponseEntity<>(question.makeHttpHeaders(), HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@LoginUser User loginUser,
                                        @PathVariable long id) {
-        questionService.deleteQuestion(loginUser, id);
+        qnaService.deleteQuestion(loginUser, id);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                              .build();

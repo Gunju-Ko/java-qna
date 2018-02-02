@@ -1,13 +1,10 @@
 package codesquad.web;
 
-import codesquad.AnswerNotFoundException;
-import codesquad.UnAuthorizedException;
 import codesquad.domain.Answer;
-import codesquad.domain.Question;
 import codesquad.domain.User;
 import codesquad.dto.AnswerDto;
 import codesquad.security.LoginUser;
-import codesquad.service.AnswerService;
+import codesquad.service.QnaService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
@@ -19,61 +16,51 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 @Validated
 @Controller
 @RequestMapping("/questions/{questionId}/answers")
 public class AnswerController {
 
-    private final AnswerService answerService;
+    private final QnaService qnaService;
 
-    public AnswerController(AnswerService answerService) {
-        this.answerService = answerService;
+    public AnswerController(QnaService qnaService) {
+        this.qnaService = qnaService;
     }
 
     @GetMapping("/{id}/form")
     public String showForm(@LoginUser User loginUser,
-                           @PathVariable("questionId") @NotNull Question question,
                            @PathVariable long id,
                            Model model) {
-        if (!answerService.isOwnerOfAnswer(loginUser, id)) {
-            throw new UnAuthorizedException();
-        }
-        Answer answer = answerService.findByIdAndQuestion(id, question)
-                                     .orElseThrow(() -> new AnswerNotFoundException(id));
+        Answer answer = qnaService.findAnswerByIdAndNotDeleted(id);
+        answer.checkAuthority(loginUser);
         model.addAttribute("answer", answer);
+
         return "/qna/answerUpdateForm";
     }
 
     @PostMapping("")
     public String create(@LoginUser User loginUser,
-                         @PathVariable("questionId") @NotNull Question question,
+                         @PathVariable long questionId,
                          @Valid AnswerDto answerDto) {
-        answerService.create(answerDto.toAnswer(loginUser), question);
-        return "redirect:/questions/" + question.getId();
+        qnaService.addAnswer(answerDto.toAnswer(loginUser), questionId);
+        return "redirect:/questions/" + questionId;
     }
 
     @PutMapping("/{id}")
     public String update(@LoginUser User loginUser,
-                         @PathVariable("questionId") @NotNull Question question,
+                         @PathVariable long questionId,
                          @PathVariable long id,
                          @Valid AnswerDto answerDto) {
-        if (!question.containAnswer(id)) {
-            throw new AnswerNotFoundException(id);
-        }
-        answerService.update(id, answerDto.toAnswer(loginUser));
-        return "redirect:/questions/" + question.getId();
+        qnaService.updateAnswer(id, answerDto.toAnswer(loginUser));
+        return "redirect:/questions/" + questionId;
     }
 
     @DeleteMapping("/{id}")
     public String delete(@LoginUser User loginUser,
-                         @PathVariable("questionId") @NotNull Question question,
+                         @PathVariable long questionId,
                          @PathVariable long id) {
-        if (!question.containAnswer(id)) {
-            throw new AnswerNotFoundException(id);
-        }
-        answerService.delete(loginUser, id);
-        return "redirect:/questions/" + question.getId();
+        qnaService.deleteAnswer(loginUser, id);
+        return "redirect:/questions/" + questionId;
     }
 }

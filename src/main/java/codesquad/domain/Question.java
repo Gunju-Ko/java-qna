@@ -111,14 +111,15 @@ public class Question extends AbstractEntity implements UrlGeneratable, ApiUrlGe
         return new QuestionDto(getId(), this.title, this.contents);
     }
 
-    public boolean containAnswer(long id) {
-        return answers.stream()
-                      .anyMatch(answer -> answer.getId() == id);
-    }
-
     void deleteAnswer(Answer answer) {
         if (!answers.remove(answer)) {
             throw new IllegalStateException();
+        }
+    }
+
+    public void checkAuthority(User loginUser) {
+        if (!isOwner(loginUser)) {
+            throw new UnAuthorizedException();
         }
     }
 
@@ -129,7 +130,7 @@ public class Question extends AbstractEntity implements UrlGeneratable, ApiUrlGe
 
     @Override
     public URI generateApiUri() {
-        String apiUri = String.format("/api/questions/%d", getId());
+        String apiUri = "/api" + generateUrl();
         return URI.create(apiUri);
     }
 
