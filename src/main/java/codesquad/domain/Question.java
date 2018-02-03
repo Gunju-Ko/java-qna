@@ -15,6 +15,8 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.Size;
 import java.net.URI;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 public class Question extends AbstractEntity implements UrlGeneratable, ApiUrlGeneratable {
@@ -79,11 +81,15 @@ public class Question extends AbstractEntity implements UrlGeneratable, ApiUrlGe
         return deleted;
     }
 
-    public void delete(User loginUser) {
+    public List<DeleteHistory> delete(User loginUser) {
         if (!isOwner(loginUser)) {
             throw new UnAuthorizedException("권한이없습니다");
         }
         this.deleted = true;
+        List<DeleteHistory> histories = answers.deleteAll(loginUser);
+        histories.add(new DeleteHistory(ContentType.QUESTION, getId(), loginUser, LocalDateTime.now()));
+
+        return histories;
     }
 
     public Question update(User loginUser, Question updatedQuestion) {
@@ -97,10 +103,6 @@ public class Question extends AbstractEntity implements UrlGeneratable, ApiUrlGe
 
     public QuestionDto toQuestionDto() {
         return new QuestionDto(getId(), this.title, this.contents);
-    }
-
-    void deleteAnswer(Answer answer) {
-        answers.deleteAnswer(answer);
     }
 
     public void checkAuthority(User loginUser) {

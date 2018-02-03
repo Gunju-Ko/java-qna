@@ -1,6 +1,8 @@
 package codesquad.domain;
 
+import codesquad.CannotDeleteException;
 import org.hibernate.annotations.Where;
+import org.springframework.util.CollectionUtils;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
@@ -10,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Embeddable
-public class Answers {
+class Answers {
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     @Where(clause = "deleted = false")
@@ -25,9 +27,25 @@ public class Answers {
         answers.add(answer);
     }
 
-    void deleteAnswer(Answer answer) {
-        if (!answers.remove(answer)) {
-            throw new IllegalStateException();
+    List<DeleteHistory> deleteAll(User loginUser) {
+        if (!canDeleteAllAnswers(loginUser)) {
+            throw new CannotDeleteException("해당 질문들을 삭제할 수 없습니다");
         }
+
+        List<DeleteHistory> histories = new ArrayList<>();
+
+        for (Answer answer : answers) {
+            histories.add(answer.delete(loginUser));
+        }
+        answers.removeIf(Answer::isDeleted);
+        return histories;
+    }
+
+    boolean canDeleteAllAnswers(User loginUser) {
+        if (CollectionUtils.isEmpty(answers)) {
+            return true;
+        }
+        return answers.stream()
+                      .allMatch(a -> a.isOwner(loginUser));
     }
 }

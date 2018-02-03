@@ -12,7 +12,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,7 +44,6 @@ public class QnaServiceAcceptanceTest {
     }
 
     @Test
-    @DirtiesContext
     public void create() throws Exception {
         Question question = qnaService.create(javajigi, new Question("test", "test"));
 
@@ -72,7 +70,6 @@ public class QnaServiceAcceptanceTest {
     }
 
     @Test
-    @DirtiesContext
     public void update() throws Exception {
         Question question = qnaService.update(javajigi, 1, new Question("update", "update content"));
         assertThat(question).isNotNull();
@@ -107,7 +104,6 @@ public class QnaServiceAcceptanceTest {
     }
 
     @Test
-    @DirtiesContext
     public void deleteQuestion() throws Exception {
         qnaService.deleteQuestion(javajigi, 1);
         assertThat(questionRepository.findOne(1L).isDeleted()).isTrue();
