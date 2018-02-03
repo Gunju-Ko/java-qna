@@ -10,6 +10,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Embeddable
 class Answers {
@@ -31,12 +32,9 @@ class Answers {
         if (!canDeleteAllAnswers(loginUser)) {
             throw new CannotDeleteException("해당 질문들을 삭제할 수 없습니다");
         }
-
-        List<DeleteHistory> histories = new ArrayList<>();
-
-        for (Answer answer : answers) {
-            histories.add(answer.delete(loginUser));
-        }
+        List<DeleteHistory> histories = answers.stream()
+                                               .map(a -> a.delete(loginUser))
+                                               .collect(Collectors.toList());
         answers.removeIf(Answer::isDeleted);
         return histories;
     }
