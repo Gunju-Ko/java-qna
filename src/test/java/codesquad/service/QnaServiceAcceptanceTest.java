@@ -135,7 +135,7 @@ public class QnaServiceAcceptanceTest {
         Answer answer = new Answer(javajigi, "test contents");
         qnaService.addAnswer(answer, 1L);
 
-        assertThat(question.getAnswers().size()).isEqualTo(3);
+        assertThat(question.getCountOfAnswers()).isEqualTo(3);
     }
 
     @Test
@@ -154,7 +154,7 @@ public class QnaServiceAcceptanceTest {
 
         Question dbQuestion = questionRepository.findOne(1L);
         assertThat(answer.isDeleted()).isTrue();
-        assertThat(dbQuestion.getAnswers().size()).isEqualTo(1);
+        assertThat(dbQuestion.getCountOfAnswers()).isEqualTo(1);
     }
 
     @Test(expected = UnAuthorizedException.class)

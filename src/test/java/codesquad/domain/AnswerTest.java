@@ -52,7 +52,7 @@ public class AnswerTest {
         answer.delete(javajigi);
 
         assertThat(answer.isDeleted()).isTrue();
-        assertThat(question.getAnswers().isEmpty()).isTrue();
+        assertThat(question.getCountOfAnswers()).isEqualTo(0);
     }
 
     @Test(expected = UnAuthorizedException.class)
