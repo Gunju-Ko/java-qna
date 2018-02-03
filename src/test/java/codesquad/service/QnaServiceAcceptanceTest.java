@@ -1,9 +1,11 @@
 package codesquad.service;
 
+import codesquad.CannotDeleteException;
 import codesquad.QuestionNotFoundException;
 import codesquad.UnAuthorizedException;
 import codesquad.domain.Answer;
 import codesquad.domain.AnswerRepository;
+import codesquad.domain.DeleteHistoryRepository;
 import codesquad.domain.Question;
 import codesquad.domain.QuestionRepository;
 import codesquad.domain.User;
@@ -32,6 +34,9 @@ public class QnaServiceAcceptanceTest {
 
     @Autowired
     private AnswerRepository answerRepository;
+
+    @Autowired
+    private DeleteHistoryRepository deleteHistoryRepository;
 
     private User javajigi;
 
@@ -105,6 +110,13 @@ public class QnaServiceAcceptanceTest {
 
     @Test
     public void deleteQuestion() throws Exception {
+        qnaService.deleteQuestion(javajigi, 4);
+        assertThat(questionRepository.findOne(4L).isDeleted()).isTrue();
+        assertThat(deleteHistoryRepository.count()).isEqualTo(1);
+    }
+
+    @Test(expected = CannotDeleteException.class)
+    public void deleteQuestion_질문자가아닌다른사람의답변이존재하는경우() throws Exception {
         qnaService.deleteQuestion(javajigi, 1);
         assertThat(questionRepository.findOne(1L).isDeleted()).isTrue();
     }
@@ -113,11 +125,6 @@ public class QnaServiceAcceptanceTest {
     public void deleteQuestion_권한이없는경우() throws Exception {
         User user = new User(2, "sanjigi", "test", "산지기", "sanjigi@slipp.net");
         qnaService.deleteQuestion(user, 1);
-    }
-
-    @Test(expected = UnAuthorizedException.class)
-    public void deleteQuestion_파라미터가NULL인경우() throws Exception {
-        qnaService.deleteQuestion(null, 1);
     }
 
     @Test(expected = QuestionNotFoundException.class)
@@ -147,10 +154,7 @@ public class QnaServiceAcceptanceTest {
     public void deleteAnswer() throws Exception {
         qnaService.deleteAnswer(javajigi, 1);
         Answer answer = answerRepository.findOne(1L);
-
-        Question dbQuestion = questionRepository.findOne(1L);
         assertThat(answer.isDeleted()).isTrue();
-        assertThat(dbQuestion.getCountOfAnswers()).isEqualTo(1);
     }
 
     @Test(expected = UnAuthorizedException.class)
