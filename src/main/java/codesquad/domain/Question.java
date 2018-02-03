@@ -85,8 +85,8 @@ public class Question extends AbstractEntity implements UrlGeneratable, ApiUrlGe
         if (!isOwner(loginUser)) {
             throw new UnAuthorizedException("권한이없습니다");
         }
-        this.deleted = true;
         List<DeleteHistory> histories = answers.deleteAll(loginUser);
+        this.deleted = true;
         histories.add(new DeleteHistory(ContentType.QUESTION, getId(), loginUser, LocalDateTime.now()));
 
         return histories;
