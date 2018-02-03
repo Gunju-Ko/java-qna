@@ -124,7 +124,7 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
     public void delete_답변에다른답변자가존재하는경우() throws Exception {
         ResponseEntity<String> response = basicAuthTemplate(defaultUser()).exchange("/questions/1", HttpMethod.DELETE,
                                                                                     HttpEntity.EMPTY, String.class);
-        assertThat(response.getStatusCode(), is(HttpStatus.INTERNAL_SERVER_ERROR));
+        assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN));
     }
 
     @Test
