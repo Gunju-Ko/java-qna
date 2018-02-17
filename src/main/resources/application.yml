@@ -1,0 +1,21 @@
+handlebars:
+  suffix: html
+  cache: false
+  expose-session-attributes: true
+
+spring:
+  h2:
+    console:
+      enabled: true
+  datasource:
+    url: jdbc:h2:~/java-qna;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
+
+logging:
+  level:
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
