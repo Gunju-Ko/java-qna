@@ -9,6 +9,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +23,10 @@ class Answers {
 
     int getCountOfAnswers() {
         return answers.size();
+    }
+
+    public List<Answer> getAnswers() {
+        return Collections.unmodifiableList(answers);
     }
 
     void addAnswer(Answer answer) {

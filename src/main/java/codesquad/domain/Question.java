@@ -57,6 +57,10 @@ public class Question extends AbstractEntity implements UrlGeneratable, ApiUrlGe
         return writer;
     }
 
+    public List<Answer> getAnswers() {
+        return answers.getAnswers();
+    }
+
     public int getCountOfAnswers() {
         return answers.getCountOfAnswers();
     }
