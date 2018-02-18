@@ -1,9 +1,9 @@
 package codesquad.web;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
+import codesquad.domain.User;
+import codesquad.dto.UserDto;
+import codesquad.security.LoginUser;
+import codesquad.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -14,10 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import codesquad.domain.User;
-import codesquad.dto.UserDto;
-import codesquad.security.LoginUser;
-import codesquad.service.UserService;
+import javax.annotation.Resource;
+import java.util.List;
 
 @Controller
 @RequestMapping("/users")
@@ -56,6 +54,12 @@ public class UserController {
     public String update(@LoginUser User loginUser, @PathVariable long id, UserDto target) {
         userService.update(loginUser, id, target);
         return "redirect:/users";
+    }
+
+    @GetMapping("/{id}/profile")
+    public String profile(@LoginUser User loginUser, @PathVariable long id, Model model) {
+        model.addAttribute("user", userService.findById(loginUser, id));
+        return "/user/profile";
     }
 
 }

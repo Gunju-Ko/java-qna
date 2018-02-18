@@ -87,4 +87,31 @@ public class UserAcceptanceTest extends AcceptanceTest {
         assertThat(response.getStatusCode(), is(HttpStatus.FOUND));
         assertTrue(response.getHeaders().getLocation().getPath().startsWith("/users"));
     }
+
+    @Test
+    public void profile() throws Exception {
+        User loginUser = defaultUser();
+        ResponseEntity<String> response = basicAuthTemplate(loginUser)
+            .getForEntity(String.format("/users/%d/profile", loginUser.getId()), String.class);
+
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
+    }
+
+    @Test
+    public void profile_no_login() throws Exception {
+        User loginUser = defaultUser();
+        ResponseEntity<String> response = template()
+            .getForEntity(String.format("/users/%d/profile", loginUser.getId()), String.class);
+
+        assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN));
+    }
+
+    @Test
+    public void profile_inValidId() throws Exception {
+        User loginUser = defaultUser();
+        ResponseEntity<String> response = basicAuthTemplate(loginUser)
+            .getForEntity("/users/2/profile", String.class);
+
+        assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN));
+    }
 }
