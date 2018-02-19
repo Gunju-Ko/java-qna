@@ -2,10 +2,12 @@ package codesquad.service;
 
 import codesquad.UnAuthenticationException;
 import codesquad.UnAuthorizedException;
+import codesquad.domain.Photo;
 import codesquad.domain.User;
 import codesquad.domain.UserRepository;
 import codesquad.dto.UserDto;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -47,5 +49,9 @@ public class UserService {
             throw new UnAuthenticationException();
         }
         return user;
+    }
+
+    public Photo addPhoto(User loginUser, long id, MultipartFile multipartFile) {
+        return null;
     }
 }

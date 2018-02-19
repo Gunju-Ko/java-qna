@@ -8,6 +8,7 @@ import support.domain.AbstractEntity;
 import support.domain.ApiUrlGeneratable;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.validation.constraints.Size;
 import java.net.URI;
@@ -32,6 +33,9 @@ public class User extends AbstractEntity implements ApiUrlGeneratable {
     @Email
     @Column(length = 50)
     private String email;
+
+    @Embedded
+    private Photo photo;
 
     public User() {
     }
@@ -64,8 +68,12 @@ public class User extends AbstractEntity implements ApiUrlGeneratable {
         return email;
     }
 
-    private boolean matchUserId(String userId) {
-        return this.userId.equals(userId);
+    public Photo getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(Photo photo) {
+        this.photo = photo;
     }
 
     public void update(User loginUser, User target) {
@@ -98,7 +106,11 @@ public class User extends AbstractEntity implements ApiUrlGeneratable {
     public boolean isGuestUser() {
         return false;
     }
-    
+
+    private boolean matchUserId(String userId) {
+        return this.userId.equals(userId);
+    }
+
     private static class GuestUser extends User {
         @Override
         public boolean isGuestUser() {

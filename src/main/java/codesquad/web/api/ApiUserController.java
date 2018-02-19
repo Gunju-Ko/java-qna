@@ -1,5 +1,6 @@
 package codesquad.web.api;
 
+import codesquad.domain.Photo;
 import codesquad.domain.User;
 import codesquad.dto.UserDto;
 import codesquad.security.LoginUser;
@@ -12,7 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -38,5 +41,14 @@ public class ApiUserController {
     @PutMapping("{id}")
     public void update(@LoginUser User loginUser, @PathVariable long id, @Valid @RequestBody UserDto updatedUser) {
         userService.update(loginUser, id, updatedUser);
+    }
+
+    @PostMapping("/{id}/profile/photos")
+    public ResponseEntity<Void> createPhoto(@LoginUser User loginUser,
+                                            @PathVariable long id,
+                                            @RequestParam("photo") MultipartFile multipartFile) {
+        Photo photo = userService.addPhoto(loginUser, id, multipartFile);
+
+        return new ResponseEntity<>(photo.makeHttpHeaders(), HttpStatus.CREATED);
     }
 }
