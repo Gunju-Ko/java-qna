@@ -16,9 +16,6 @@ import org.springframework.util.MultiValueMap;
 import support.test.AcceptanceTest;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -98,21 +95,18 @@ public class ApiUserAcceptanceTest extends AcceptanceTest {
 
     private HttpEntity<MultiValueMap<String, Object>> getMultipartHttpEntity() {
         MultiValueMap<String, Object> bodyMap = new LinkedMultiValueMap<>();
-        bodyMap.add("photo", createTempFile());
+        bodyMap.add("photo", getTestImageFile());
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         return new HttpEntity<>(bodyMap, headers);
     }
 
-    private Resource createTempFile() {
-        Path tempFile;
-        try {
-            tempFile = Files.createTempFile("test-file", ".txt");
-            Files.write(tempFile, "test".getBytes());
-        } catch (IOException e) {
-            throw new IllegalStateException();
+    private Resource getTestImageFile() {
+        File file = new File("src/test/resources/static/test.png");
+        if (!file.exists()) {
+            throw new IllegalStateException("테스트 파일을 찾을 수 없습니다");
         }
-        File file = tempFile.toFile();
         return new FileSystemResource(file);
     }
 }

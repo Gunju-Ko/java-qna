@@ -4,6 +4,7 @@ import support.domain.ApiUrlGeneratable;
 
 import javax.persistence.Embeddable;
 import java.net.URI;
+import java.util.Objects;
 
 @Embeddable
 public class Photo implements ApiUrlGeneratable {
@@ -11,7 +12,7 @@ public class Photo implements ApiUrlGeneratable {
     private String filePath;
 
     public Photo(String filePath) {
-        this.filePath = filePath;
+        this.filePath = Objects.requireNonNull(filePath);
     }
 
     public Photo() {
