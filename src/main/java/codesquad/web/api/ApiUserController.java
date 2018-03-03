@@ -34,7 +34,7 @@ public class ApiUserController {
 
     @GetMapping("{id}")
     public UserDto show(@LoginUser User loginUser, @PathVariable long id) {
-        User user = userService.findById(loginUser, id);
+        User user = userService.findOne(loginUser, id);
         return user.toUserDto();
     }
 
