@@ -1,22 +1,26 @@
 package codesquad.service;
 
-import java.util.List;
-import java.util.Optional;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Service;
-
 import codesquad.UnAuthenticationException;
 import codesquad.UnAuthorizedException;
+import codesquad.UserNotFoundException;
+import codesquad.domain.Photo;
 import codesquad.domain.User;
 import codesquad.domain.UserRepository;
 import codesquad.dto.UserDto;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-@Service("userService")
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
 public class UserService {
-    @Resource(name = "userRepository")
-    private UserRepository userRepository;
+
+    private final UserRepository userRepository;
+
+    private final FileService fileService;
 
     public User add(UserDto userDto) {
         return userRepository.save(userDto.toUser());
@@ -28,8 +32,11 @@ public class UserService {
         return userRepository.save(original);
     }
 
-    public User findById(User loginUser, long id) {
+    public User findOne(User loginUser, long id) {
         User user = userRepository.findOne(id);
+        if (user == null) {
+            throw new UserNotFoundException(id);
+        }
         if (!user.equals(loginUser)) {
             throw new UnAuthorizedException();
         }
@@ -41,7 +48,23 @@ public class UserService {
     }
 
     public User login(String userId, String password) throws UnAuthenticationException {
-        // TODO 로그인 기능 구현
-        return null;
+        if (userId == null || password == null) {
+            throw new UnAuthenticationException();
+        }
+        User user = userRepository.findByUserId(userId)
+                                  .orElseThrow(UnAuthenticationException::new);
+        if (!user.matchPassword(password)) {
+            throw new UnAuthenticationException();
+        }
+        return user;
+    }
+
+    @Transactional
+    public Photo addPhoto(User loginUser, long id, MultipartFile multipartFile) {
+        User user = findOne(loginUser, id);
+        Photo photo = fileService.savePhoto(user, multipartFile);
+        user.setPhoto(photo);
+
+        return photo;
     }
 }

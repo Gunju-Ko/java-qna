@@ -1,21 +1,22 @@
 package codesquad.service;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
+import codesquad.AnswerNotFoundException;
+import codesquad.QuestionNotFoundException;
+import codesquad.domain.Answer;
+import codesquad.domain.AnswerRepository;
+import codesquad.domain.DeleteHistory;
+import codesquad.domain.Question;
+import codesquad.domain.QuestionRepository;
+import codesquad.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import codesquad.CannotDeleteException;
-import codesquad.domain.Answer;
-import codesquad.domain.AnswerRepository;
-import codesquad.domain.Question;
-import codesquad.domain.QuestionRepository;
-import codesquad.domain.User;
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.Optional;
 
 @Service("qnaService")
 public class QnaService {
@@ -24,11 +25,11 @@ public class QnaService {
     @Resource(name = "questionRepository")
     private QuestionRepository questionRepository;
 
-    @Resource(name = "answerRepository")
-    private AnswerRepository answerRepository;
-
     @Resource(name = "deleteHistoryService")
     private DeleteHistoryService deleteHistoryService;
+
+    @Resource(name = "answerRepository")
+    private AnswerRepository answerRepository;
 
     public Question create(User loginUser, Question question) {
         question.writeBy(loginUser);
@@ -36,18 +37,58 @@ public class QnaService {
         return questionRepository.save(question);
     }
 
-    public Question findById(long id) {
-        return questionRepository.findOne(id);
+    public Optional<Question> findQuestionById(long id) {
+        return Optional.ofNullable(questionRepository.findOne(id));
     }
 
-    public Question update(User loginUser, long id, Question updatedQuestion) {
-        // TODO 수정 기능 구현
-        return null;
+    public Question findQuestionByIdAndNotDeleted(long id) {
+        Question question = questionRepository.findOne(id);
+        if (question == null || question.isDeleted()) {
+            throw new QuestionNotFoundException(id);
+        }
+        return question;
     }
 
     @Transactional
-    public void deleteQuestion(User loginUser, long questionId) throws CannotDeleteException {
-        // TODO 삭제 기능 구현
+    public Question update(User loginUser, long id, Question updatedQuestion) {
+        Question question = findQuestionByIdAndNotDeleted(id);
+
+        return question.update(loginUser, updatedQuestion);
+    }
+
+    @Transactional
+    public void deleteQuestion(User loginUser, long id) {
+        Question question = findQuestionByIdAndNotDeleted(id);
+
+        List<DeleteHistory> histories = question.delete(loginUser);
+        deleteHistoryService.saveAll(histories);
+    }
+
+    @Transactional
+    public Answer addAnswer(Answer answer, long questonId) {
+        Question question = findQuestionByIdAndNotDeleted(questonId);
+        question.addAnswer(answer);
+        return answer;
+    }
+
+    @Transactional
+    public Answer updateAnswer(long id, Answer updateAnswer) {
+        Answer answer = findAnswerByIdAndNotDeleted(id);
+        return answer.update(updateAnswer);
+    }
+
+    @Transactional
+    public void deleteAnswer(User loginUser, long id) {
+        Answer answer = findAnswerByIdAndNotDeleted(id);
+        answer.delete(loginUser);
+    }
+
+    public Answer findAnswerByIdAndNotDeleted(long id) {
+        Answer answer = answerRepository.findOne(id);
+        if (answer == null || answer.isDeleted()) {
+            throw new AnswerNotFoundException(id);
+        }
+        return answer;
     }
 
     public Iterable<Question> findAll() {
@@ -56,14 +97,5 @@ public class QnaService {
 
     public List<Question> findAll(Pageable pageable) {
         return questionRepository.findAll(pageable).getContent();
-    }
-
-    public Answer addAnswer(User loginUser, long questionId, String contents) {
-        return null;
-    }
-
-    public Answer deleteAnswer(User loginUser, long id) {
-        // TODO 답변 삭제 기능 구현 
-        return null;
     }
 }

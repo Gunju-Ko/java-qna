@@ -1,26 +1,28 @@
 package codesquad.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.Email;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import codesquad.UnAuthorizedException;
 import codesquad.dto.UserDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.validator.constraints.Email;
 import support.domain.AbstractEntity;
+import support.domain.ApiUrlGeneratable;
+
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.validation.constraints.Size;
+import java.net.URI;
 
 @Entity
-public class User extends AbstractEntity {
+public class User extends AbstractEntity implements ApiUrlGeneratable {
     public static final GuestUser GUEST_USER = new GuestUser();
 
+    private static final String DEFAULT_IMAGE = "/images/default_image.png";
     @Size(min = 3, max = 20)
     @Column(unique = true, nullable = false, length = 20)
     private String userId;
 
-    @Size(min = 6, max = 20)
+    @Size(min = 4, max = 20)
     @Column(nullable = false, length = 20)
     @JsonIgnore
     private String password;
@@ -32,6 +34,9 @@ public class User extends AbstractEntity {
     @Email
     @Column(length = 50)
     private String email;
+
+    @Embedded
+    private Photo photo;
 
     public User() {
     }
@@ -64,8 +69,15 @@ public class User extends AbstractEntity {
         return email;
     }
 
-    private boolean matchUserId(String userId) {
-        return this.userId.equals(userId);
+    public String getPhoto() {
+        if (photo != null) {
+            return photo.getFilePath();
+        }
+        return DEFAULT_IMAGE;
+    }
+
+    public void setPhoto(Photo photo) {
+        this.photo = photo;
     }
 
     public void update(User loginUser, User target) {
@@ -88,12 +100,21 @@ public class User extends AbstractEntity {
     public UserDto toUserDto() {
         return new UserDto(this.userId, this.password, this.name, this.email);
     }
-    
+
+    @Override
+    public URI generateApiUri() {
+        return URI.create("/api/users/" + getId());
+    }
+
     @JsonIgnore
     public boolean isGuestUser() {
         return false;
     }
-    
+
+    private boolean matchUserId(String userId) {
+        return this.userId.equals(userId);
+    }
+
     private static class GuestUser extends User {
         @Override
         public boolean isGuestUser() {
