@@ -15,7 +15,11 @@ import java.io.IOException;
 @Service
 public class FileService {
 
-    private static final String PHOTO_RESOURCE_PATH = "src/main/resources/static/images/users";
+    private static final String IMAGE_DIRECTORY = "images";
+
+    private static final String USER_DIRECTORY = "users";
+
+    private static final String PHOTO_RESOURCE_PATH = String.format("src/main/resources/static/%s/%s", IMAGE_DIRECTORY, USER_DIRECTORY);
 
     public Photo savePhoto(User user, MultipartFile multipartFile) {
         if (!ImageFormat.support(multipartFile.getOriginalFilename())) {
@@ -30,15 +34,13 @@ public class FileService {
         return new Photo(imagePath(file));
     }
 
-    private File createFile(User user, ImageFormat imageFormat) {
-        String filePath = String.format("%s/%s.%s", PHOTO_RESOURCE_PATH, user.getUserId(), imageFormat.toString());
+    File createFile(User user, ImageFormat imageFormat) {
+        String filePath = getUserPhotoPath(user, imageFormat);
         deleteFile(filePath);
-
-        File f = new File(filePath);
-        return new File(f.getAbsolutePath());
+        return new File(getAbsolutePath(filePath));
     }
 
-    private void deleteFile(String filePath) {
+    void deleteFile(String filePath) {
         File file = new File(filePath);
         if (!file.exists()) {
             return;
@@ -48,15 +50,27 @@ public class FileService {
         }
     }
 
-    private String imagePath(File file) {
+    String getUserPhotoPath(User user, ImageFormat imageFormat) {
+        return String.format("%s/%s.%s", PHOTO_RESOURCE_PATH, user.getUserId(), imageFormat.toString());
+    }
+
+    String imagePath(File file) {
         String absolutePath = file.getAbsolutePath();
 
-        String[] s = StringUtils.split(absolutePath, "/");
-        if (s.length <= 3) {
+        String[] directories = StringUtils.split(absolutePath, "/");
+        if (directories.length <= 3) {
             throw new IllegalArgumentException("이미지 경로가 올바르지 못합니다 : " + absolutePath);
         }
 
-        int last = s.length - 1;
-        return String.format("/%s/%s/%s", s[last - 2], s[last - 1], s[last]);
+        int last = directories.length - 1;
+        if (!directories[last - 2].equals(IMAGE_DIRECTORY) || !directories[last - 1].equals(USER_DIRECTORY)) {
+            throw new IllegalArgumentException("이미지 경로가 올바르지 못합니다");
+        }
+        return String.format("/%s/%s/%s", IMAGE_DIRECTORY, USER_DIRECTORY, directories[last]);
+    }
+
+    String getAbsolutePath(String path) {
+        File file = new File(path);
+        return file.getAbsolutePath();
     }
 }
