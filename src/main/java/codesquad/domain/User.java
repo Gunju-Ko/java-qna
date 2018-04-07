@@ -71,7 +71,7 @@ public class User extends AbstractEntity implements ApiUrlGeneratable {
 
     public String getPhoto() {
         if (photo != null) {
-            return photo.getFilePath();
+            return photo.getLocation();
         }
         return DEFAULT_IMAGE;
     }

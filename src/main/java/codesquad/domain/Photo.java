@@ -9,21 +9,21 @@ import java.util.Objects;
 @Embeddable
 public class Photo implements ApiUrlGeneratable {
 
-    private String filePath;
+    private String location;
 
-    public Photo(String filePath) {
-        this.filePath = Objects.requireNonNull(filePath);
+    public Photo(String location) {
+        this.location = Objects.requireNonNull(location);
     }
 
     public Photo() {
     }
 
-    public String getFilePath() {
-        return filePath;
+    public String getLocation() {
+        return location;
     }
 
     @Override
     public URI generateApiUri() {
-        return URI.create(String.format("%s", getFilePath()));
+        return URI.create(String.format("%s", getLocation()));
     }
 }
