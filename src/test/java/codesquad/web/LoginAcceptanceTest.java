@@ -43,7 +43,7 @@ public class LoginAcceptanceTest extends AcceptanceTest {
 
     @Test
     public void login_존재하지않는회원() throws Exception {
-        User gunju = new User(1, "gunju", "test", "자바지기", "javajigi@slipp.net");
+        User gunju = new User(3, "존재하지않는회원", "test", "테스트", "gunju@slipp.net");
 
         ResponseEntity<String> response = template().postForEntity("/login", htmlRequest(gunju), String.class);
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
