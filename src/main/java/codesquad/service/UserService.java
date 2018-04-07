@@ -1,12 +1,12 @@
 package codesquad.service;
 
-import codesquad.UnAuthenticationException;
-import codesquad.UnAuthorizedException;
-import codesquad.UserNotFoundException;
+import codesquad.common.exception.UnAuthenticationException;
+import codesquad.common.exception.UnAuthorizedException;
+import codesquad.common.exception.UserNotFoundException;
 import codesquad.domain.Photo;
 import codesquad.domain.User;
 import codesquad.domain.UserRepository;
-import codesquad.dto.UserDto;
+import codesquad.web.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

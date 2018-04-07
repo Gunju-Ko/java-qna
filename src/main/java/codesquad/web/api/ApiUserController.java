@@ -2,9 +2,9 @@ package codesquad.web.api;
 
 import codesquad.domain.Photo;
 import codesquad.domain.User;
-import codesquad.dto.UserDto;
-import codesquad.security.LoginUser;
 import codesquad.service.UserService;
+import codesquad.web.dto.UserDto;
+import codesquad.web.security.LoginUser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

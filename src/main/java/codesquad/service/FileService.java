@@ -1,11 +1,11 @@
 package codesquad.service;
 
-import codesquad.FileCreateException;
-import codesquad.FileDeleteException;
+import codesquad.common.exception.FileCreateException;
+import codesquad.common.exception.FileDeleteException;
+import codesquad.common.utils.UserPhotoUtils;
 import codesquad.domain.ImageFormat;
 import codesquad.domain.Photo;
 import codesquad.domain.User;
-import codesquad.utils.UserPhotoUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 

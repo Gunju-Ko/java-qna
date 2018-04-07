@@ -2,9 +2,9 @@ package codesquad.web;
 
 import codesquad.domain.Answer;
 import codesquad.domain.User;
-import codesquad.dto.AnswerDto;
-import codesquad.security.LoginUser;
 import codesquad.service.QnaService;
+import codesquad.web.dto.AnswerDto;
+import codesquad.web.security.LoginUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;

@@ -1,7 +1,7 @@
 package codesquad.domain;
 
-import codesquad.UnAuthorizedException;
-import codesquad.dto.UserDto;
+import codesquad.common.exception.UnAuthorizedException;
+import codesquad.web.dto.UserDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.Email;
 import support.domain.AbstractEntity;

@@ -1,6 +1,6 @@
 package codesquad.domain;
 
-import codesquad.CannotDeleteException;
+import codesquad.common.exception.CannotDeleteException;
 import org.junit.Before;
 import org.junit.Test;
 

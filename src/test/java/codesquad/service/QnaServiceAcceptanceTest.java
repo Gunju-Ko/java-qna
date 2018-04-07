@@ -1,8 +1,8 @@
 package codesquad.service;
 
-import codesquad.CannotDeleteException;
-import codesquad.QuestionNotFoundException;
-import codesquad.UnAuthorizedException;
+import codesquad.common.exception.CannotDeleteException;
+import codesquad.common.exception.QuestionNotFoundException;
+import codesquad.common.exception.UnAuthorizedException;
 import codesquad.domain.Answer;
 import codesquad.domain.AnswerRepository;
 import codesquad.domain.DeleteHistoryRepository;

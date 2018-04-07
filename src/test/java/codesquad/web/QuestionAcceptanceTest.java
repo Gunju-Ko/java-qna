@@ -3,7 +3,7 @@ package codesquad.web;
 import codesquad.domain.Question;
 import codesquad.domain.QuestionRepository;
 import codesquad.domain.User;
-import codesquad.dto.QuestionDto;
+import codesquad.web.dto.QuestionDto;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;

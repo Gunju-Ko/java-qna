@@ -1,6 +1,6 @@
 package codesquad.web.api;
 
-import codesquad.dto.QuestionDto;
+import codesquad.web.dto.QuestionDto;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

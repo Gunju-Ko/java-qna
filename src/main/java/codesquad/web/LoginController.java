@@ -1,10 +1,10 @@
 package codesquad.web;
 
-import codesquad.UnAuthenticationException;
+import codesquad.common.exception.UnAuthenticationException;
 import codesquad.domain.User;
-import codesquad.dto.UserDto;
-import codesquad.security.HttpSessionUtils;
 import codesquad.service.UserService;
+import codesquad.web.dto.UserDto;
+import codesquad.web.security.HttpSessionUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

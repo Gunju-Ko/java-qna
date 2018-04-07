@@ -1,7 +1,7 @@
 package codesquad.domain;
 
-import codesquad.UnAuthorizedException;
-import codesquad.dto.AnswerDto;
+import codesquad.common.exception.UnAuthorizedException;
+import codesquad.web.dto.AnswerDto;
 import support.domain.AbstractEntity;
 import support.domain.ApiUrlGeneratable;
 import support.domain.UrlGeneratable;

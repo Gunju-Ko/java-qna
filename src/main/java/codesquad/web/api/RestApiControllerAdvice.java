@@ -1,7 +1,7 @@
 package codesquad.web.api;
 
-import codesquad.CustomException;
-import codesquad.UnAuthorizedException;
+import codesquad.common.exception.CustomException;
+import codesquad.common.exception.UnAuthorizedException;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;

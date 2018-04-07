@@ -1,7 +1,7 @@
 package codesquad.service;
 
-import codesquad.AnswerNotFoundException;
-import codesquad.QuestionNotFoundException;
+import codesquad.common.exception.AnswerNotFoundException;
+import codesquad.common.exception.QuestionNotFoundException;
 import codesquad.domain.Answer;
 import codesquad.domain.AnswerRepository;
 import codesquad.domain.DeleteHistory;

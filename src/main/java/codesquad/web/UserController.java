@@ -1,9 +1,9 @@
 package codesquad.web;
 
 import codesquad.domain.User;
-import codesquad.dto.UserDto;
-import codesquad.security.LoginUser;
 import codesquad.service.UserService;
+import codesquad.web.dto.UserDto;
+import codesquad.web.security.LoginUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;

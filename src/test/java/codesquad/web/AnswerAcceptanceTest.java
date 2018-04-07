@@ -2,7 +2,7 @@ package codesquad.web;
 
 import codesquad.domain.Answer;
 import codesquad.domain.AnswerRepository;
-import codesquad.dto.AnswerDto;
+import codesquad.web.dto.AnswerDto;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

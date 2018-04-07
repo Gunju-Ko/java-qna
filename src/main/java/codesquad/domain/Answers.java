@@ -1,6 +1,6 @@
 package codesquad.domain;
 
-import codesquad.CannotDeleteException;
+import codesquad.common.exception.CannotDeleteException;
 import org.hibernate.annotations.Where;
 import org.springframework.util.CollectionUtils;
 

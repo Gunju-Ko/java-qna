@@ -1,9 +1,9 @@
 package codesquad.web;
 
-import codesquad.CannotDeleteException;
-import codesquad.CustomException;
-import codesquad.NotFoundException;
-import codesquad.UnAuthorizedException;
+import codesquad.common.exception.CannotDeleteException;
+import codesquad.common.exception.CustomException;
+import codesquad.common.exception.NotFoundException;
+import codesquad.common.exception.UnAuthorizedException;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;

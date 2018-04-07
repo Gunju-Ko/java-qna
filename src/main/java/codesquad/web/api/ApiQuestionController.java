@@ -2,9 +2,9 @@ package codesquad.web.api;
 
 import codesquad.domain.Question;
 import codesquad.domain.User;
-import codesquad.dto.QuestionDto;
-import codesquad.security.LoginUser;
 import codesquad.service.QnaService;
+import codesquad.web.dto.QuestionDto;
+import codesquad.web.security.LoginUser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;

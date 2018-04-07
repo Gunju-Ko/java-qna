@@ -1,7 +1,7 @@
 package codesquad.web.api;
 
 import codesquad.domain.User;
-import codesquad.dto.UserDto;
+import codesquad.web.dto.UserDto;
 import org.junit.Test;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
