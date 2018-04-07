@@ -83,6 +83,10 @@ public class ApiUserAcceptanceTest extends AcceptanceTest {
                                                                                     getMultipartHttpEntity(), String.class);
 
         assertThat(response.getStatusCode(), is(HttpStatus.CREATED));
+        String location = response.getHeaders().getLocation().getPath();
+        assertThat(location, is("/images/users/javajigi.png"));
+
+        deleteFile(location);
     }
 
     @Test
@@ -108,5 +112,14 @@ public class ApiUserAcceptanceTest extends AcceptanceTest {
             throw new IllegalStateException("테스트 파일을 찾을 수 없습니다");
         }
         return new FileSystemResource(file);
+    }
+
+    private void deleteFile(String location) {
+        File file = new File("src/main/resources/static" + location);
+
+        if (!file.exists()) {
+            throw new IllegalStateException("파일을 찾을 수 없습니다");
+        }
+        assertThat(file.delete(), is(true));
     }
 }

@@ -24,6 +24,6 @@ public class Photo implements ApiUrlGeneratable {
 
     @Override
     public URI generateApiUri() {
-        return URI.create(String.format("/files/%s", getFilePath()));
+        return URI.create(String.format("%s", getFilePath()));
     }
 }
