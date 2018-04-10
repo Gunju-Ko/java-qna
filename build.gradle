@@ -31,8 +31,9 @@ dependencyManagement {
 }
 
 checkstyle {
-    toolVersion = '7.5.1'
+    toolVersion = '8.1'
     configFile = 'checkstyle.xml' as File
+    ignoreFailure = true
     sourceSets = [project.sourceSets.main, project.sourceSets.test]
 }
 

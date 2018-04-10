@@ -46,9 +46,12 @@ public class AnswerDto {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) { return true; }
-        if (!(o instanceof AnswerDto)) { return false; }
-
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof AnswerDto)) {
+            return false;
+        }
         AnswerDto answerDto = (AnswerDto) o;
 
         return contents != null ? contents.equals(answerDto.contents) : answerDto.contents == null;
@@ -56,8 +59,6 @@ public class AnswerDto {
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (contents != null ? contents.hashCode() : 0);
-        return result;
+        return contents != null ? contents.hashCode() : 0;
     }
 }
