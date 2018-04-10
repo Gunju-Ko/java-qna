@@ -40,9 +40,3 @@
 
 * 에러페이지
   * 에러페이지 개선
-  
-* gradle 플러그인 조사 및 적용
-  * 소스코드 정적 분석 툴 : checkstyle, pmd, findBugs, Sonar, Lint
-  * 테스트 커버리지 툴 : jacoco, cobertura, clover, sonarqube 
-  
-* 패키지 분리
