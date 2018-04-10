@@ -59,19 +59,24 @@ public class QuestionDto {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) { return true; }
-        if (!(o instanceof QuestionDto)) { return false; }
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof QuestionDto)) {
+            return false;
+        }
 
         QuestionDto that = (QuestionDto) o;
 
-        if (title != null ? !title.equals(that.title) : that.title != null) { return false; }
+        if (title != null ? !title.equals(that.title) : that.title != null) {
+            return false;
+        }
         return contents != null ? contents.equals(that.contents) : that.contents == null;
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (title != null ? title.hashCode() : 0);
+        int result = title != null ? title.hashCode() : 0;
         result = 31 * result + (contents != null ? contents.hashCode() : 0);
         return result;
     }

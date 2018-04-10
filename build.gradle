@@ -8,14 +8,14 @@ buildscript {
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        classpath "io.spring.gradle:dependency-management-plugin:1.0.5.RELEASE"
     }
 }
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
-apply plugin: "io.spring.dependency-management"
+apply plugin: 'checkstyle'
+apply plugin: 'jacoco'
 
 version = '1.0.0'
 sourceCompatibility = 1.8
@@ -23,6 +23,31 @@ targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
+    }
+}
+
+checkstyle {
+    toolVersion = '8.1'
+    configFile = 'checkstyle.xml' as File
+    ignoreFailures = true
+    sourceSets = [project.sourceSets.main, project.sourceSets.test]
+}
+
+jacoco {
+    toolVersion = '0.8.1'
+}
+
+jacocoTestReport {
+    reports {
+        html.enabled = true
+        xml.enabled = true
+        csv.enabled = false
+    }
 }
 
 dependencies {
