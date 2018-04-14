@@ -50,6 +50,12 @@ public class WebControllerAdvice {
         return createView(ex.getLocalizedMessage());
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ModelAndView handleIllegalArgumentException(RuntimeException ex) {
+        return createView(ex.getLocalizedMessage());
+    }
+
     private ModelAndView createView(String errorMessage) {
         ModelAndView mv = new ModelAndView("error");
         mv.addObject("message", errorMessage);

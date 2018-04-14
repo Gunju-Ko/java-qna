@@ -28,7 +28,7 @@ public class UserTest {
         User origin = newUser("sanjigi");
         User loginUser = origin;
         User target = new User("sanjigi", "password", "name2", "javajigi@slipp.net2");
-        origin.update(loginUser, target);
+        origin.update(loginUser, target, null);
         assertThat(origin.getName(), is(target.getName()));
         assertThat(origin.getEmail(), is(target.getEmail()));
     }
@@ -38,14 +38,14 @@ public class UserTest {
         User origin = newUser("sanjigi");
         User loginUser = newUser("javajigi");
         User target = new User("sanjigi", "password", "name2", "javajigi@slipp.net2");
-        origin.update(loginUser, target);
+        origin.update(loginUser, target, null);
     }
 
     @Test
     public void update_match_password() {
         User origin = newUser("sanjigi");
         User target = new User("sanjigi", "password", "name2", "javajigi@slipp.net2");
-        origin.update(origin, target);
+        origin.update(origin, target, null);
         assertThat(origin.getName(), is(target.getName()));
         assertThat(origin.getEmail(), is(target.getEmail()));
     }
@@ -54,6 +54,6 @@ public class UserTest {
     public void update_mismatch_password() {
         User origin = newUser("sanjigi", "password");
         User target = new User("sanjigi", "password2", "name2", "javajigi@slipp.net2");
-        origin.update(origin, target);
+        origin.update(origin, target, null);
     }
 }

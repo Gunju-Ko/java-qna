@@ -7,7 +7,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.util.Collections;
-import java.util.Map;
 
 public class HtmlFormDataBuilder {
     private HttpHeaders headers;
@@ -24,11 +23,6 @@ public class HtmlFormDataBuilder {
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
         return new HtmlFormDataBuilder(headers);
-    }
-
-    public HtmlFormDataBuilder addParameter(Map<String, Object> parameters) {
-        parameters.forEach((key, value) -> body.add(key, value));
-        return this;
     }
 
     public HtmlFormDataBuilder addParameter(String key, Object value) {

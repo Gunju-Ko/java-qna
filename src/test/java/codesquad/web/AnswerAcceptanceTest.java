@@ -15,6 +15,7 @@ import support.test.AcceptanceTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
+import static support.test.HttpEntityUtils.makeFormUrlEncodedRequest;
 
 public class AnswerAcceptanceTest extends AcceptanceTest {
 
@@ -27,7 +28,7 @@ public class AnswerAcceptanceTest extends AcceptanceTest {
         AnswerDto answerDto = new AnswerDto("test contents");
 
         ResponseEntity<String> response = basicAuthTemplate(defaultUser()).postForEntity("/questions/1/answers",
-                                                                                         htmlRequest(answerDto),
+                                                                                         makeFormUrlEncodedRequest(answerDto),
                                                                                          String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FOUND);
         assertThat(repository.findAll().size()).isEqualTo(3);
@@ -39,7 +40,7 @@ public class AnswerAcceptanceTest extends AcceptanceTest {
         AnswerDto answerDto = new AnswerDto("update test");
         ResponseEntity<String> response = basicAuthTemplate(defaultUser()).exchange("/questions/1/answers/1",
                                                                                     HttpMethod.PUT,
-                                                                                    htmlRequest(answerDto),
+                                                                                    makeFormUrlEncodedRequest(answerDto),
                                                                                     String.class);
 
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.FOUND));

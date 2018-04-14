@@ -6,6 +6,7 @@ import codesquad.common.exception.UserNotFoundException;
 import codesquad.domain.Photo;
 import codesquad.domain.User;
 import codesquad.domain.UserRepository;
+import codesquad.web.dto.UpdateUserDto;
 import codesquad.web.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,9 +28,9 @@ public class UserService {
     }
 
     @Transactional
-    public void update(User loginUser, long id, UserDto updatedUser) {
+    public void update(User loginUser, long id, UpdateUserDto updatedUser) {
         User original = userRepository.findOne(id);
-        original.update(loginUser, updatedUser.toUser());
+        original.update(loginUser, updatedUser.toUser(), updatedUser.getUpdatePassword());
     }
 
     public User findOne(User loginUser, long id) {

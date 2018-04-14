@@ -15,6 +15,7 @@ import support.test.AcceptanceTest;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static support.test.HttpEntityUtils.makeFormUrlEncodedRequest;
 
 public class QuestionAcceptanceTest extends AcceptanceTest {
 
@@ -33,7 +34,7 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
         QuestionDto questionDto = new QuestionDto("test", "test context");
 
         ResponseEntity<String> response = basicAuthTemplate(defaultUser()).postForEntity("/questions",
-                                                                                         htmlRequest(questionDto),
+                                                                                         makeFormUrlEncodedRequest(questionDto),
                                                                                          String.class);
         assertThat(response.getStatusCode(), is(HttpStatus.FOUND));
         assertThat(repository.findByWriter(defaultUser()).size(), is(3));
@@ -44,7 +45,7 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
         QuestionDto questionDto = new QuestionDto("t", "test");
 
         ResponseEntity<String> response = basicAuthTemplate(defaultUser()).postForEntity("/questions",
-                                                                                         htmlRequest(questionDto),
+                                                                                         makeFormUrlEncodedRequest(questionDto),
                                                                                          String.class);
         assertThat(response.getStatusCode(), is(HttpStatus.BAD_REQUEST));
     }
@@ -87,7 +88,7 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
         QuestionDto questionDto = new QuestionDto("update", "update test");
         ResponseEntity<String> response = basicAuthTemplate(defaultUser()).exchange("/questions/1",
                                                                                     HttpMethod.PUT,
-                                                                                    htmlRequest(questionDto),
+                                                                                    makeFormUrlEncodedRequest(questionDto),
                                                                                     String.class);
 
         assertThat(response.getStatusCode(), is(HttpStatus.FOUND));
@@ -103,7 +104,7 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
         QuestionDto questionDto = new QuestionDto("update", "update test");
         ResponseEntity<String> response = basicAuthTemplate(user).exchange("/questions/1",
                                                                            HttpMethod.PUT,
-                                                                           htmlRequest(questionDto),
+                                                                           makeFormUrlEncodedRequest(questionDto),
                                                                            String.class);
 
         assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN));
