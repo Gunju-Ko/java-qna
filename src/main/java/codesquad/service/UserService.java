@@ -1,7 +1,7 @@
 package codesquad.service;
 
+import codesquad.common.exception.PermissionDeniedException;
 import codesquad.common.exception.UnAuthenticationException;
-import codesquad.common.exception.UnAuthorizedException;
 import codesquad.common.exception.UserNotFoundException;
 import codesquad.domain.Photo;
 import codesquad.domain.User;
@@ -38,7 +38,7 @@ public class UserService {
             throw new UserNotFoundException(id);
         }
         if (!user.equals(loginUser)) {
-            throw new UnAuthorizedException();
+            throw new PermissionDeniedException();
         }
         return user;
     }

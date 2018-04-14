@@ -1,6 +1,6 @@
 package codesquad.common.exception;
 
-public class CannotDeleteException extends UnAuthorizedException {
+public class CannotDeleteException extends PermissionDeniedException {
 
     private static final String DEFAULT_MESSAGE = "해당 질문은 삭제할 수 없습니다";
 

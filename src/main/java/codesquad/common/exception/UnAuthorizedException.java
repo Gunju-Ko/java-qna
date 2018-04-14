@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 
 public class UnAuthorizedException extends CustomException {
 
-    private static final String DEFAULT_MESSAGE = "권한이 없습니다";
+    private static final String DEFAULT_MESSAGE = "로그인이 필요 합니다";
 
     public UnAuthorizedException() {
         super(DEFAULT_MESSAGE);
@@ -14,12 +14,8 @@ public class UnAuthorizedException extends CustomException {
         super(message);
     }
 
-    public UnAuthorizedException(String message, Object... arguments) {
-        super(message, arguments);
-    }
-
     @Override
     public HttpStatus status() {
-        return HttpStatus.FORBIDDEN;
+        return HttpStatus.UNAUTHORIZED;
     }
 }

@@ -1,6 +1,6 @@
 package codesquad.domain;
 
-import codesquad.common.exception.UnAuthorizedException;
+import codesquad.common.exception.PermissionDeniedException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,7 +36,7 @@ public class AnswerTest {
         assertThat(answer.getContents()).isEqualTo("update test");
     }
 
-    @Test(expected = UnAuthorizedException.class)
+    @Test(expected = PermissionDeniedException.class)
     public void update_권한이없는사용자() throws Exception {
         Answer updateAnswer = new Answer(gunju, "update test");
         answer.update(updateAnswer);
@@ -49,7 +49,7 @@ public class AnswerTest {
         assertThat(answer.isDeleted()).isTrue();
     }
 
-    @Test(expected = UnAuthorizedException.class)
+    @Test(expected = PermissionDeniedException.class)
     public void delete_권한이없는사용자() throws Exception {
         answer.delete(gunju);
     }

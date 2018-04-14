@@ -11,6 +11,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.ResourceAccessException;
 import support.test.AcceptanceTest;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -54,7 +55,7 @@ public class UserAcceptanceTest extends AcceptanceTest {
     public void updateForm_no_login() throws Exception {
         ResponseEntity<String> response = template().getForEntity(String.format("/users/%d/form", defaultUser().getId()),
                                                                   String.class);
-        assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN));
+        assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
     }
 
     @Test
@@ -66,19 +67,10 @@ public class UserAcceptanceTest extends AcceptanceTest {
         assertThat(response.getBody().contains(loginUser.getEmail()), is(true));
     }
 
-    @Test
+    @Test(expected = ResourceAccessException.class)
     public void update_no_login() throws Exception {
         ResponseEntity<String> response = update(template());
-        assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN));
-    }
-
-    private ResponseEntity<String> update(TestRestTemplate template) throws Exception {
-        HttpEntity<MultiValueMap<String, Object>> request = urlEncodedForm().addParameter("_method", "put")
-                                                                            .addParameter("password", "password2")
-                                                                            .addParameter("name", "자바지기2")
-                                                                            .addParameter("email", "javajigi@slipp.net")
-                                                                            .build();
-        return template.postForEntity(String.format("/users/%d", defaultUser().getId()), request, String.class);
+        assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
     }
 
     @Test
@@ -103,7 +95,7 @@ public class UserAcceptanceTest extends AcceptanceTest {
         ResponseEntity<String> response = template()
             .getForEntity(String.format("/users/%d/profile", loginUser.getId()), String.class);
 
-        assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN));
+        assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
     }
 
     @Test
@@ -113,5 +105,14 @@ public class UserAcceptanceTest extends AcceptanceTest {
             .getForEntity("/users/2/profile", String.class);
 
         assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN));
+    }
+
+    private ResponseEntity<String> update(TestRestTemplate template) throws Exception {
+        HttpEntity<MultiValueMap<String, Object>> request = urlEncodedForm().addParameter("_method", "put")
+                                                                            .addParameter("password", "test")
+                                                                            .addParameter("name", "자바지기2")
+                                                                            .addParameter("email", "javajigi@slipp.net")
+                                                                            .build();
+        return template.postForEntity(String.format("/users/%d", defaultUser().getId()), request, String.class);
     }
 }

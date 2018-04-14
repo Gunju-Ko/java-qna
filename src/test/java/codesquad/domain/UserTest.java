@@ -1,7 +1,7 @@
 package codesquad.domain;
 
 import codesquad.common.exception.InvalidPasswordException;
-import codesquad.common.exception.UnAuthorizedException;
+import codesquad.common.exception.PermissionDeniedException;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -33,7 +33,7 @@ public class UserTest {
         assertThat(origin.getEmail(), is(target.getEmail()));
     }
 
-    @Test(expected = UnAuthorizedException.class)
+    @Test(expected = PermissionDeniedException.class)
     public void update_not_owner() throws Exception {
         User origin = newUser("sanjigi");
         User loginUser = newUser("javajigi");

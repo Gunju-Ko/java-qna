@@ -2,6 +2,8 @@ package codesquad.web;
 
 import codesquad.common.exception.CustomException;
 import codesquad.common.exception.NotFoundException;
+import codesquad.common.exception.PermissionDeniedException;
+import codesquad.common.exception.UnAuthenticationException;
 import codesquad.common.exception.UnAuthorizedException;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.core.annotation.Order;
@@ -29,9 +31,16 @@ public class WebControllerAdvice {
         return createView(getCustomErrorMessage(ex));
     }
 
-    @ExceptionHandler({UnAuthorizedException.class})
+    @ExceptionHandler({PermissionDeniedException.class})
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ModelAndView handleUnAuthorizedException(UnAuthorizedException e) {
+    public ModelAndView handlePermissionDeniedException(PermissionDeniedException e) {
+        return createView(getCustomErrorMessage(e));
+    }
+
+    @ExceptionHandler(value = {UnAuthorizedException.class,
+                               UnAuthenticationException.class})
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ModelAndView handleUnAuthorizedException(CustomException e) {
         return createView(getCustomErrorMessage(e));
     }
 

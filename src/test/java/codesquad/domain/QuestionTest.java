@@ -1,7 +1,7 @@
 package codesquad.domain;
 
 import codesquad.common.exception.CannotDeleteException;
-import codesquad.common.exception.UnAuthorizedException;
+import codesquad.common.exception.PermissionDeniedException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,7 +41,7 @@ public class QuestionTest {
         assertThat(question.getCountOfAnswers()).isEqualTo(0);
     }
 
-    @Test(expected = UnAuthorizedException.class)
+    @Test(expected = PermissionDeniedException.class)
     public void delete_권한이없는유저() throws Exception {
         User user = new User(3, "gunju", "test", "고건주", "gunju@slipp.net");
         question.delete(user);
@@ -53,7 +53,7 @@ public class QuestionTest {
         assertThat(question.isOwner(new User(3, "gunju", "test", "고건주", "gunju@slipp.net"))).isFalse();
     }
 
-    @Test(expected = UnAuthorizedException.class)
+    @Test(expected = PermissionDeniedException.class)
     public void update_권한이없는유저() throws Exception {
         User user = new User(3, "gunju", "test", "고건주", "gunju@slipp.net");
         question.update(user, new Question("test", "test"));

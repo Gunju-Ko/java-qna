@@ -1,7 +1,7 @@
 package codesquad.domain;
 
 import codesquad.common.exception.InvalidPasswordException;
-import codesquad.common.exception.UnAuthorizedException;
+import codesquad.common.exception.PermissionDeniedException;
 import codesquad.web.dto.UserDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.Email;
@@ -83,7 +83,7 @@ public class User extends AbstractEntity implements ApiUrlGeneratable {
 
     public void update(User loginUser, User target) {
         if (!matchUserId(loginUser.getUserId())) {
-            throw new UnAuthorizedException();
+            throw new PermissionDeniedException();
         }
 
         if (!matchPassword(target.getPassword())) {
