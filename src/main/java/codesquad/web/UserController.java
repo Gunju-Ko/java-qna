@@ -2,28 +2,31 @@ package codesquad.web;
 
 import codesquad.domain.User;
 import codesquad.service.UserService;
+import codesquad.web.dto.UpdateUserDto;
 import codesquad.web.dto.UserDto;
 import codesquad.web.security.LoginUser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.annotation.Resource;
+import javax.validation.Valid;
 import java.util.List;
 
+@Validated
 @Controller
 @RequestMapping("/users")
 public class UserController {
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-    @Resource(name = "userService")
-    private UserService userService;
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("/form")
     public String form() {
@@ -31,7 +34,7 @@ public class UserController {
     }
 
     @PostMapping("")
-    public String create(UserDto userDto) {
+    public String create(@Valid UserDto userDto) {
         userService.add(userDto);
         return "redirect:/users";
     }
@@ -39,7 +42,6 @@ public class UserController {
     @GetMapping("")
     public String list(Model model) {
         List<User> users = userService.findAll();
-        log.debug("user size : {}", users.size());
         model.addAttribute("users", users);
         return "/user/list";
     }
@@ -51,7 +53,10 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public String update(@LoginUser User loginUser, @PathVariable long id, UserDto target) {
+    public String update(@LoginUser User loginUser, @PathVariable long id, @Valid UpdateUserDto target) {
+        if (!target.isValidUpdatePassword()) {
+            throw new IllegalArgumentException("새로운 비밀번호가 올바르지 않습니다");
+        }
         userService.update(loginUser, id, target);
         return "redirect:/users";
     }

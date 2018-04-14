@@ -2,6 +2,7 @@ package codesquad.web;
 
 import codesquad.domain.User;
 import codesquad.domain.UserRepository;
+import codesquad.web.dto.UpdateUserDto;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,12 +14,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.ResourceAccessException;
 import support.test.AcceptanceTest;
+import support.test.HttpEntityUtils;
+
+import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static support.test.HtmlFormDataBuilder.urlEncodedForm;
 
 public class UserAcceptanceTest extends AcceptanceTest {
     private static final Logger log = LoggerFactory.getLogger(UserAcceptanceTest.class);
@@ -69,15 +72,37 @@ public class UserAcceptanceTest extends AcceptanceTest {
 
     @Test(expected = ResourceAccessException.class)
     public void update_no_login() throws Exception {
-        ResponseEntity<String> response = update(template());
+        ResponseEntity<String> response = update(template(), HttpEntityUtils.makeFormUrlEncodedRequest(defaultUser(),
+                                                                                                       Collections.singletonMap("_method",
+                                                                                                                                "put")));
         assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
     }
 
     @Test
     public void update() throws Exception {
-        ResponseEntity<String> response = update(basicAuthTemplate());
+        ResponseEntity<String> response = update(basicAuthTemplate(), HttpEntityUtils.makeFormUrlEncodedRequest(defaultUser(),
+                                                                                                                Collections.singletonMap(
+                                                                                                                    "_method",
+                                                                                                                    "put")));
         assertThat(response.getStatusCode(), is(HttpStatus.FOUND));
         assertTrue(response.getHeaders().getLocation().getPath().startsWith("/users"));
+    }
+
+    @Test
+    public void update_잘못된새로운비밀번호() throws Exception {
+        UpdateUserDto updateUser = UpdateUserDto.builder()
+                                                .userId("javajigi")
+                                                .password("test")
+                                                .name("자바지기")
+                                                .email("javajigi@slipp.net")
+                                                .updatePassword("12345")
+                                                .confirmUpdatePassword("1234")
+                                                .build();
+        ResponseEntity<String> response = update(basicAuthTemplate(), HttpEntityUtils.makeFormUrlEncodedRequest(updateUser,
+                                                                                                                Collections.singletonMap(
+                                                                                                                    "_method",
+                                                                                                                    "put")));
+        assertThat(response.getStatusCode(), is(HttpStatus.BAD_REQUEST));
     }
 
     @Test
@@ -107,12 +132,10 @@ public class UserAcceptanceTest extends AcceptanceTest {
         assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN));
     }
 
-    private ResponseEntity<String> update(TestRestTemplate template) throws Exception {
-        HttpEntity<MultiValueMap<String, Object>> request = urlEncodedForm().addParameter("_method", "put")
-                                                                            .addParameter("password", "test")
-                                                                            .addParameter("name", "자바지기2")
-                                                                            .addParameter("email", "javajigi@slipp.net")
-                                                                            .build();
-        return template.postForEntity(String.format("/users/%d", defaultUser().getId()), request, String.class);
+    private ResponseEntity<String> update(TestRestTemplate template, HttpEntity<MultiValueMap<String, Object>> httpEntity) throws
+                                                                                                                           Exception {
+        String url = String.format("/users/%d", defaultUser().getId());
+
+        return template.postForEntity(url, httpEntity, String.class);
     }
 }

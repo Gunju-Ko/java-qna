@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.MultiValueMap;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
-import static support.test.HtmlFormDataBuilder.urlEncodedForm;
+import static support.test.HtmlFormDataBuilder.formUrlEncodedForm;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -74,21 +74,21 @@ public abstract class AcceptanceTest {
     }
 
     protected HttpEntity<MultiValueMap<String, Object>> htmlRequest(User user) {
-        return urlEncodedForm().addParameter("userId", user.getUserId())
-                               .addParameter("password", user.getPassword())
-                               .addParameter("name", user.getName())
-                               .addParameter("email", user.getEmail())
-                               .build();
+        return formUrlEncodedForm().addParameter("userId", user.getUserId())
+                                   .addParameter("password", user.getPassword())
+                                   .addParameter("name", user.getName())
+                                   .addParameter("email", user.getEmail())
+                                   .build();
     }
 
     protected HttpEntity<MultiValueMap<String, Object>> htmlRequest(QuestionDto question) {
-        return urlEncodedForm().addParameter("title", question.getTitle())
-                               .addParameter("contents", question.getContents())
-                               .build();
+        return formUrlEncodedForm().addParameter("title", question.getTitle())
+                                   .addParameter("contents", question.getContents())
+                                   .build();
     }
 
     protected HttpEntity<MultiValueMap<String, Object>> htmlRequest(AnswerDto question) {
-        return urlEncodedForm().addParameter("contents", question.getContents())
-                               .build();
+        return formUrlEncodedForm().addParameter("contents", question.getContents())
+                                   .build();
     }
 }
