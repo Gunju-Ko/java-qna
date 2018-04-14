@@ -1,26 +1,25 @@
 package codesquad.common.exception;
 
-public class UnAuthorizedException extends RuntimeException {
-    private static final long serialVersionUID = 1L;
+import org.springframework.http.HttpStatus;
+
+public class UnAuthorizedException extends CustomException {
+
+    private static final String DEFAULT_MESSAGE = "권한이 없습니다";
 
     public UnAuthorizedException() {
-        super();
-    }
-
-    public UnAuthorizedException(String message, Throwable cause, boolean enableSuppression,
-            boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
-
-    public UnAuthorizedException(String message, Throwable cause) {
-        super(message, cause);
+        super(DEFAULT_MESSAGE);
     }
 
     public UnAuthorizedException(String message) {
         super(message);
     }
 
-    public UnAuthorizedException(Throwable cause) {
-        super(cause);
+    public UnAuthorizedException(String message, Object... arguments) {
+        super(message, arguments);
+    }
+
+    @Override
+    public HttpStatus status() {
+        return HttpStatus.FORBIDDEN;
     }
 }

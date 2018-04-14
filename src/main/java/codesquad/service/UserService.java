@@ -26,10 +26,10 @@ public class UserService {
         return userRepository.save(userDto.toUser());
     }
 
-    public User update(User loginUser, long id, UserDto updatedUser) {
+    @Transactional
+    public void update(User loginUser, long id, UserDto updatedUser) {
         User original = userRepository.findOne(id);
         original.update(loginUser, updatedUser.toUser());
-        return userRepository.save(original);
     }
 
     public User findOne(User loginUser, long id) {

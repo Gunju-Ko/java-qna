@@ -1,5 +1,6 @@
 package codesquad.domain;
 
+import codesquad.common.exception.InvalidPasswordException;
 import codesquad.common.exception.UnAuthorizedException;
 import codesquad.web.dto.UserDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -86,7 +87,7 @@ public class User extends AbstractEntity implements ApiUrlGeneratable {
         }
 
         if (!matchPassword(target.getPassword())) {
-            return;
+            throw new InvalidPasswordException();
         }
 
         this.name = target.name;

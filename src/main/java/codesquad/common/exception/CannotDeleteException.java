@@ -1,16 +1,14 @@
 package codesquad.common.exception;
 
-import org.springframework.http.HttpStatus;
+public class CannotDeleteException extends UnAuthorizedException {
 
-public class CannotDeleteException extends CustomException {
-    private static final long serialVersionUID = 1L;
+    private static final String DEFAULT_MESSAGE = "해당 질문은 삭제할 수 없습니다";
+
+    public CannotDeleteException() {
+        super(DEFAULT_MESSAGE);
+    }
 
     public CannotDeleteException(String message) {
         super(message);
-    }
-
-    @Override
-    public HttpStatus status() {
-        return HttpStatus.FORBIDDEN;
     }
 }

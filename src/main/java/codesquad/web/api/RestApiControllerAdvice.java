@@ -1,7 +1,6 @@
 package codesquad.web.api;
 
 import codesquad.common.exception.CustomException;
-import codesquad.common.exception.UnAuthorizedException;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -29,12 +28,6 @@ public class RestApiControllerAdvice {
     public ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
         return ResponseEntity.status(e.status())
                              .body(new ErrorResponse(e.status(), getCustomErrorMessage(e)));
-    }
-
-    @ExceptionHandler(UnAuthorizedException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ErrorResponse handleUnAuthorizedException() {
-        return new ErrorResponse(HttpStatus.FORBIDDEN, "해당 리소스에 대한 접근 권한이 없습니다");
     }
 
     @ExceptionHandler(RuntimeException.class)

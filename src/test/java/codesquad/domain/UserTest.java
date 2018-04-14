@@ -1,10 +1,10 @@
 package codesquad.domain;
 
+import codesquad.common.exception.InvalidPasswordException;
 import codesquad.common.exception.UnAuthorizedException;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 
 public class UserTest {
@@ -50,12 +50,10 @@ public class UserTest {
         assertThat(origin.getEmail(), is(target.getEmail()));
     }
 
-    @Test
+    @Test(expected = InvalidPasswordException.class)
     public void update_mismatch_password() {
         User origin = newUser("sanjigi", "password");
         User target = new User("sanjigi", "password2", "name2", "javajigi@slipp.net2");
         origin.update(origin, target);
-        assertThat(origin.getName(), is(not(target.getName())));
-        assertThat(origin.getEmail(), is(not(target.getEmail())));
     }
 }
