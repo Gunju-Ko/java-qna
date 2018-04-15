@@ -4,16 +4,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.validation.constraints.Size;
-
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class UpdateUserDto extends UserDto {
 
-    @Size(min = 4, max = 20)
     private String updatePassword;
 
-    @Size(min = 4, max = 20)
     private String confirmUpdatePassword;
 
     public UpdateUserDto() {
@@ -37,6 +33,9 @@ public class UpdateUserDto extends UserDto {
     public boolean isValidUpdatePassword() {
         if (StringUtils.isEmpty(updatePassword)) {
             return StringUtils.isEmpty(confirmUpdatePassword);
+        }
+        if (updatePassword.length() < 4 || updatePassword.length() > 20) {
+            return false;
         }
         return updatePassword.equals(confirmUpdatePassword);
     }
