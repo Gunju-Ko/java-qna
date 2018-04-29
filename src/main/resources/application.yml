@@ -26,6 +26,8 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: create-drop
+  resources:
+    cache-period: 60
 
 logging:
   level:

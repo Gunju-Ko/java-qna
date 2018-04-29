@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -65,6 +67,14 @@ public class UserController {
     public String profile(@LoginUser User loginUser, @PathVariable long id, Model model) {
         model.addAttribute("user", userService.findOne(loginUser, id));
         return "/user/profile";
+    }
+
+    @PostMapping("/{id}/profile/photos")
+    public String createPhoto(@LoginUser User loginUser,
+                              @PathVariable long id,
+                              @RequestParam("photo") MultipartFile multipartFile) {
+        userService.addPhoto(loginUser, id, multipartFile);
+        return "redirect:/users/" + id + "/form";
     }
 
 }
