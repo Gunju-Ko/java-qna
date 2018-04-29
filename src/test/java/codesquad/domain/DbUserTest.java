@@ -23,7 +23,7 @@ public class DbUserTest {
         assertThat(javajigi).isNotNull();
         assertThat(gunju).isNotNull();
 
-        assertThat(javajigi.getPhoto()).isEqualTo("/images/default_image.png");
+        assertThat(javajigi.getPhoto()).isEqualTo("/images/users/default_image.png");
         assertThat(gunju.getPhoto()).isEqualTo("/images/users/gunju.jpeg");
     }
 }

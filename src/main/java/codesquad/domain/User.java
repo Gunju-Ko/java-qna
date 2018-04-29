@@ -19,7 +19,7 @@ import java.net.URI;
 public class User extends AbstractEntity implements ApiUrlGeneratable {
     public static final GuestUser GUEST_USER = new GuestUser();
 
-    private static final String DEFAULT_IMAGE = "/images/default_image.png";
+    private static final String DEFAULT_IMAGE = "/images/users/default_image.png";
     @Size(min = 3, max = 20)
     @Column(unique = true, nullable = false, length = 20)
     private String userId;
