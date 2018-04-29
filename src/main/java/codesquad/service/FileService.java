@@ -2,7 +2,7 @@ package codesquad.service;
 
 import codesquad.common.exception.FileCreateException;
 import codesquad.common.exception.FileDeleteException;
-import codesquad.common.utils.UserPhotoUtils;
+import codesquad.common.utils.PhotoUtils;
 import codesquad.domain.ImageFormat;
 import codesquad.domain.Photo;
 import codesquad.domain.User;
@@ -25,13 +25,26 @@ public class FileService {
         } catch (IOException e) {
             throw new FileCreateException(e.getMessage());
         }
-        return new Photo(UserPhotoUtils.userPhotoLocation(file));
+        return new Photo(PhotoUtils.userPhotoLocation(file));
     }
 
     private File createFile(User user, ImageFormat imageFormat) {
-        String filePath = UserPhotoUtils.userPhotoRelativePath(user, imageFormat);
-        deleteFile(filePath);
-        return new File(UserPhotoUtils.absolutePath(filePath));
+        String absoluteFilePath = PhotoUtils.userPhotoAbsolutePath(user, imageFormat);
+        deleteFile(absoluteFilePath);
+        File file = new File(absoluteFilePath);
+
+        createParentDirectoryIfNeed(file);
+
+        return file;
+    }
+
+    private void createParentDirectoryIfNeed(File file) {
+        File parent = file.getParentFile();
+        if (parent != null && !parent.exists()) {
+            if (parent.mkdirs()) {
+                throw new FileCreateException("부모 디렉토리 생성 실패");
+            }
+        }
     }
 
     private void deleteFile(String filePath) {
