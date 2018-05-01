@@ -201,3 +201,16 @@ h3,h4,h5 {
     padding-right: 2.5em;
 }
 
+.profile-author-thumb {
+    width: 100px;
+    height: 100px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px
+}
+
+.update-profile-author-thumb {
+    width: 200px;
+    height: 200px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px
+}
