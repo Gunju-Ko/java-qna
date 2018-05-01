@@ -1,6 +1,7 @@
 package codesquad.web.api;
 
 import codesquad.web.dto.QuestionDto;
+import codesquad.web.dto.QuestionsDto;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,24 @@ import support.test.AcceptanceTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ApiQuestionAcceptanceTest extends AcceptanceTest {
+
+    @Test
+    public void showPage_첫번째페이지() throws Exception {
+        ResponseEntity<QuestionsDto> response = template().getForEntity("/api/questions", QuestionsDto.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        QuestionsDto body = response.getBody();
+        assertThat(body.getSize()).isEqualTo(3);
+    }
+
+    @Test
+    public void showPage_두번째페이지() throws Exception {
+        ResponseEntity<QuestionsDto> response = template().getForEntity("/api/questions?page=2", QuestionsDto.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        QuestionsDto body = response.getBody();
+        assertThat(body.getSize()).isEqualTo(0);
+    }
 
     @Test
     public void show() {

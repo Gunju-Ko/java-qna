@@ -96,6 +96,6 @@ public class QnaService {
     }
 
     public List<Question> findAll(Pageable pageable) {
-        return questionRepository.findAll(pageable).getContent();
+        return questionRepository.findByDeleted(false, pageable).getContent();
     }
 }
