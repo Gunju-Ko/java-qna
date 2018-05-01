@@ -1,6 +1,6 @@
 package codesquad.domain;
 
-import codesquad.common.exception.UnAuthorizedException;
+import codesquad.common.exception.PermissionDeniedException;
 import codesquad.web.dto.QuestionDto;
 import support.domain.AbstractEntity;
 import support.domain.ApiUrlGeneratable;
@@ -87,7 +87,7 @@ public class Question extends AbstractEntity implements UrlGeneratable, ApiUrlGe
 
     public List<DeleteHistory> delete(User loginUser) {
         if (!isOwner(loginUser)) {
-            throw new UnAuthorizedException("권한이없습니다");
+            throw new PermissionDeniedException("권한이없습니다");
         }
         List<DeleteHistory> histories = answers.deleteAll(loginUser);
         this.deleted = true;
@@ -98,7 +98,7 @@ public class Question extends AbstractEntity implements UrlGeneratable, ApiUrlGe
 
     public Question update(User loginUser, Question updatedQuestion) {
         if (!isOwner(loginUser)) {
-            throw new UnAuthorizedException();
+            throw new PermissionDeniedException();
         }
         this.title = updatedQuestion.title;
         this.contents = updatedQuestion.contents;
@@ -111,7 +111,7 @@ public class Question extends AbstractEntity implements UrlGeneratable, ApiUrlGe
 
     public void checkAuthority(User loginUser) {
         if (!isOwner(loginUser)) {
-            throw new UnAuthorizedException();
+            throw new PermissionDeniedException();
         }
     }
 

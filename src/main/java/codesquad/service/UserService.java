@@ -1,11 +1,12 @@
 package codesquad.service;
 
+import codesquad.common.exception.PermissionDeniedException;
 import codesquad.common.exception.UnAuthenticationException;
-import codesquad.common.exception.UnAuthorizedException;
 import codesquad.common.exception.UserNotFoundException;
 import codesquad.domain.Photo;
 import codesquad.domain.User;
 import codesquad.domain.UserRepository;
+import codesquad.web.dto.UpdateUserDto;
 import codesquad.web.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,10 +27,10 @@ public class UserService {
         return userRepository.save(userDto.toUser());
     }
 
-    public User update(User loginUser, long id, UserDto updatedUser) {
+    @Transactional
+    public void update(User loginUser, long id, UpdateUserDto updatedUser) {
         User original = userRepository.findOne(id);
-        original.update(loginUser, updatedUser.toUser());
-        return userRepository.save(original);
+        original.update(loginUser, updatedUser.toUser(), updatedUser.getUpdatePassword());
     }
 
     public User findOne(User loginUser, long id) {
@@ -38,7 +39,7 @@ public class UserService {
             throw new UserNotFoundException(id);
         }
         if (!user.equals(loginUser)) {
-            throw new UnAuthorizedException();
+            throw new PermissionDeniedException();
         }
         return user;
     }

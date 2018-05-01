@@ -1,6 +1,6 @@
 package codesquad.domain;
 
-import codesquad.common.exception.UnAuthorizedException;
+import codesquad.common.exception.PermissionDeniedException;
 import codesquad.web.dto.AnswerDto;
 import support.domain.AbstractEntity;
 import support.domain.ApiUrlGeneratable;
@@ -82,7 +82,7 @@ public class Answer extends AbstractEntity implements UrlGeneratable, ApiUrlGene
 
     public Answer update(Answer updateAnswer) {
         if (!isOwner(updateAnswer.writer)) {
-            throw new UnAuthorizedException();
+            throw new PermissionDeniedException();
         }
         this.contents = updateAnswer.contents;
         return this;
@@ -90,7 +90,7 @@ public class Answer extends AbstractEntity implements UrlGeneratable, ApiUrlGene
 
     public DeleteHistory delete(User loginUser) {
         if (!isOwner(loginUser)) {
-            throw new UnAuthorizedException();
+            throw new PermissionDeniedException();
         }
         this.deleted = true;
         return new DeleteHistory(ContentType.ANSWER, getId(), loginUser, LocalDateTime.now());
@@ -98,7 +98,7 @@ public class Answer extends AbstractEntity implements UrlGeneratable, ApiUrlGene
 
     public void checkAuthority(User loginUser) {
         if (!isOwner(loginUser)) {
-            throw new UnAuthorizedException();
+            throw new PermissionDeniedException();
         }
     }
 

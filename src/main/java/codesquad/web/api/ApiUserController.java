@@ -3,6 +3,7 @@ package codesquad.web.api;
 import codesquad.domain.Photo;
 import codesquad.domain.User;
 import codesquad.service.UserService;
+import codesquad.web.dto.UpdateUserDto;
 import codesquad.web.dto.UserDto;
 import codesquad.web.security.LoginUser;
 import org.springframework.http.HttpStatus;
@@ -39,7 +40,7 @@ public class ApiUserController {
     }
 
     @PutMapping("{id}")
-    public void update(@LoginUser User loginUser, @PathVariable long id, @Valid @RequestBody UserDto updatedUser) {
+    public void update(@LoginUser User loginUser, @PathVariable long id, @Valid @RequestBody UpdateUserDto updatedUser) {
         userService.update(loginUser, id, updatedUser);
     }
 

@@ -1,10 +1,10 @@
 package codesquad.domain;
 
-import codesquad.common.exception.UnAuthorizedException;
+import codesquad.common.exception.InvalidPasswordException;
+import codesquad.common.exception.PermissionDeniedException;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 
 public class UserTest {
@@ -28,34 +28,32 @@ public class UserTest {
         User origin = newUser("sanjigi");
         User loginUser = origin;
         User target = new User("sanjigi", "password", "name2", "javajigi@slipp.net2");
-        origin.update(loginUser, target);
+        origin.update(loginUser, target, null);
         assertThat(origin.getName(), is(target.getName()));
         assertThat(origin.getEmail(), is(target.getEmail()));
     }
 
-    @Test(expected = UnAuthorizedException.class)
+    @Test(expected = PermissionDeniedException.class)
     public void update_not_owner() throws Exception {
         User origin = newUser("sanjigi");
         User loginUser = newUser("javajigi");
         User target = new User("sanjigi", "password", "name2", "javajigi@slipp.net2");
-        origin.update(loginUser, target);
+        origin.update(loginUser, target, null);
     }
 
     @Test
     public void update_match_password() {
         User origin = newUser("sanjigi");
         User target = new User("sanjigi", "password", "name2", "javajigi@slipp.net2");
-        origin.update(origin, target);
+        origin.update(origin, target, null);
         assertThat(origin.getName(), is(target.getName()));
         assertThat(origin.getEmail(), is(target.getEmail()));
     }
 
-    @Test
+    @Test(expected = InvalidPasswordException.class)
     public void update_mismatch_password() {
         User origin = newUser("sanjigi", "password");
         User target = new User("sanjigi", "password2", "name2", "javajigi@slipp.net2");
-        origin.update(origin, target);
-        assertThat(origin.getName(), is(not(target.getName())));
-        assertThat(origin.getEmail(), is(not(target.getEmail())));
+        origin.update(origin, target, null);
     }
 }

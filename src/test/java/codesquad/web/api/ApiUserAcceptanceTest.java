@@ -115,7 +115,7 @@ public class ApiUserAcceptanceTest extends AcceptanceTest {
     }
 
     private void deleteFile(String location) {
-        File file = new File("src/main/resources/static" + location);
+        File file = new File("/Users/skp/my/qna" + location);
 
         if (!file.exists()) {
             throw new IllegalStateException("파일을 찾을 수 없습니다");

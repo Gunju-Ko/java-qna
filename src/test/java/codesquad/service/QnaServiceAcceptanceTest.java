@@ -1,8 +1,8 @@
 package codesquad.service;
 
 import codesquad.common.exception.CannotDeleteException;
+import codesquad.common.exception.PermissionDeniedException;
 import codesquad.common.exception.QuestionNotFoundException;
-import codesquad.common.exception.UnAuthorizedException;
 import codesquad.domain.Answer;
 import codesquad.domain.AnswerRepository;
 import codesquad.domain.DeleteHistoryRepository;
@@ -86,13 +86,13 @@ public class QnaServiceAcceptanceTest {
 
     }
 
-    @Test(expected = UnAuthorizedException.class)
+    @Test(expected = PermissionDeniedException.class)
     public void update_권한이없는경우() throws Exception {
         User user = new User(2, "sanjigi", "test", "산지기", "sanjigi@slipp.net");
         qnaService.update(user, 1, new Question("update", "update content"));
     }
 
-    @Test(expected = UnAuthorizedException.class)
+    @Test(expected = PermissionDeniedException.class)
     public void update_파라미터가NULL인경우() throws Exception {
         qnaService.update(null, 1, new Question("update", "update content"));
 
@@ -121,7 +121,7 @@ public class QnaServiceAcceptanceTest {
         assertThat(questionRepository.findOne(1L).isDeleted()).isTrue();
     }
 
-    @Test(expected = UnAuthorizedException.class)
+    @Test(expected = PermissionDeniedException.class)
     public void deleteQuestion_권한이없는경우() throws Exception {
         User user = new User(2, "sanjigi", "test", "산지기", "sanjigi@slipp.net");
         qnaService.deleteQuestion(user, 1);
@@ -157,7 +157,7 @@ public class QnaServiceAcceptanceTest {
         assertThat(answer.isDeleted()).isTrue();
     }
 
-    @Test(expected = UnAuthorizedException.class)
+    @Test(expected = PermissionDeniedException.class)
     public void deleteAnswer_권한이없는사용자() throws Exception {
         qnaService.deleteAnswer(gunju, 1);
     }

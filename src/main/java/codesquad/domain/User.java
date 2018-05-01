@@ -1,8 +1,10 @@
 package codesquad.domain;
 
-import codesquad.common.exception.UnAuthorizedException;
+import codesquad.common.exception.InvalidPasswordException;
+import codesquad.common.exception.PermissionDeniedException;
 import codesquad.web.dto.UserDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Email;
 import support.domain.AbstractEntity;
 import support.domain.ApiUrlGeneratable;
@@ -17,7 +19,7 @@ import java.net.URI;
 public class User extends AbstractEntity implements ApiUrlGeneratable {
     public static final GuestUser GUEST_USER = new GuestUser();
 
-    private static final String DEFAULT_IMAGE = "/images/default_image.png";
+    private static final String DEFAULT_IMAGE = "/images/users/default_image.png";
     @Size(min = 3, max = 20)
     @Column(unique = true, nullable = false, length = 20)
     private String userId;
@@ -80,17 +82,20 @@ public class User extends AbstractEntity implements ApiUrlGeneratable {
         this.photo = photo;
     }
 
-    public void update(User loginUser, User target) {
+    public void update(User loginUser, User target, String updatePassword) {
         if (!matchUserId(loginUser.getUserId())) {
-            throw new UnAuthorizedException();
+            throw new PermissionDeniedException();
         }
 
         if (!matchPassword(target.getPassword())) {
-            return;
+            throw new InvalidPasswordException();
         }
 
         this.name = target.name;
         this.email = target.email;
+        if (StringUtils.isNotEmpty(updatePassword)) {
+            this.password = updatePassword;
+        }
     }
 
     public boolean matchPassword(String password) {
