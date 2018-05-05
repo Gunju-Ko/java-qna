@@ -10,6 +10,7 @@ import codesquad.domain.QuestionRepository;
 import codesquad.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -95,7 +96,7 @@ public class QnaService {
         return questionRepository.findByDeleted(false);
     }
 
-    public List<Question> findAll(Pageable pageable) {
-        return questionRepository.findByDeleted(false, pageable).getContent();
+    public Page<Question> findAll(Pageable pageable) {
+        return questionRepository.findByDeleted(false, pageable);
     }
 }

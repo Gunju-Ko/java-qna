@@ -6,6 +6,7 @@ import codesquad.service.QnaService;
 import codesquad.web.dto.QuestionDto;
 import codesquad.web.dto.QuestionsDto;
 import codesquad.web.security.LoginUser;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/questions")
@@ -34,7 +34,7 @@ public class ApiQuestionController {
 
     @GetMapping("")
     public ResponseEntity<QuestionsDto> showPage(@PageableDefault Pageable pageable) {
-        List<Question> questions = qnaService.findAll(pageable);
+        Page<Question> questions = qnaService.findAll(pageable);
 
         return ResponseEntity.ok(QuestionsDto.of(questions));
     }
