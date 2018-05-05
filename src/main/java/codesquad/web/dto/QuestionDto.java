@@ -1,9 +1,11 @@
 package codesquad.web.dto;
 
 import codesquad.domain.Question;
+import lombok.Data;
 
 import javax.validation.constraints.Size;
 
+@Data
 public class QuestionDto {
     private long id;
 
@@ -13,6 +15,8 @@ public class QuestionDto {
     @Size(min = 3)
     private String contents;
 
+    private UserDto writer;
+
     public QuestionDto() {
     }
 
@@ -21,36 +25,14 @@ public class QuestionDto {
     }
 
     public QuestionDto(long id, String title, String contents) {
+        this(id, title, contents, null);
+    }
+
+    public QuestionDto(long id, String title, String contents, UserDto writer) {
         this.id = id;
         this.title = title;
         this.contents = contents;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public QuestionDto setId(long id) {
-        this.id = id;
-        return this;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public QuestionDto setTitle(String title) {
-        this.title = title;
-        return this;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public QuestionDto setContents(String contents) {
-        this.contents = contents;
-        return this;
+        this.writer = writer;
     }
 
     public Question toQuestion() {

@@ -36,7 +36,7 @@ public class ApiQuestionController {
     public ResponseEntity<QuestionsDto> showPage(@PageableDefault Pageable pageable) {
         Page<Question> questions = qnaService.findAll(pageable);
 
-        return ResponseEntity.ok(QuestionsDto.of(questions));
+        return ResponseEntity.ok(QuestionsDto.of(questions, "/api/questions"));
     }
 
     @GetMapping("/{id}")

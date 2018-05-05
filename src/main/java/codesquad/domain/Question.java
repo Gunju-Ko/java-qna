@@ -106,7 +106,7 @@ public class Question extends AbstractEntity implements UrlGeneratable, ApiUrlGe
     }
 
     public QuestionDto toQuestionDto() {
-        return new QuestionDto(getId(), this.title, this.contents);
+        return new QuestionDto(getId(), this.title, this.contents, this.writer.toUserDto());
     }
 
     public void checkAuthority(User loginUser) {

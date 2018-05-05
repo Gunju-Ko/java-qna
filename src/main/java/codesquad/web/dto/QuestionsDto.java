@@ -24,22 +24,16 @@ public class QuestionsDto {
         this.links = links;
     }
 
-    public static QuestionsDto of(Page<Question> questions) {
-        return new QuestionsDto(makeContents(questions), makeLinks(questions));
+    public static QuestionsDto of(Page<Question> questions, String url) {
+        return new QuestionsDto(makeContents(questions), makeLinks(questions, url));
     }
 
-    private static List<QuestionDto> makeContents(Page<Question> questions) {
-        return questions.getContent()
-                        .stream()
-                        .map(Question::toQuestionDto)
-                        .collect(Collectors.toList());
+    public boolean isHasNext() {
+        return links.getNext() != null;
     }
 
-    private static Links makeLinks(Page<Question> questions) {
-        return Links.builder()
-                    .url("/api/questions")
-                    .page(questions)
-                    .build();
+    public boolean isHasPrev() {
+        return links.getPrev() != null;
     }
 
     @JsonIgnore
@@ -52,8 +46,22 @@ public class QuestionsDto {
         return this.links.getNext();
     }
 
+    private static Links makeLinks(Page<Question> questions, String url) {
+        return Links.builder()
+                    .url(url)
+                    .page(questions)
+                    .build();
+    }
+
     @JsonIgnore
     public Link getPrevLink() {
         return this.links.getPrev();
+    }
+
+    private static List<QuestionDto> makeContents(Page<Question> questions) {
+        return questions.getContent()
+                        .stream()
+                        .map(Question::toQuestionDto)
+                        .collect(Collectors.toList());
     }
 }
