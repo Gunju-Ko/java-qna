@@ -28,10 +28,12 @@ public class QuestionsDto {
         return new QuestionsDto(makeContents(questions), makeLinks(questions, url));
     }
 
+    @JsonIgnore
     public boolean isHasNext() {
         return links.getNext() != null;
     }
 
+    @JsonIgnore
     public boolean isHasPrev() {
         return links.getPrev() != null;
     }
