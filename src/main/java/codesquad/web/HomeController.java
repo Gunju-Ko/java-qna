@@ -2,6 +2,11 @@ package codesquad.web;
 
 import codesquad.domain.Question;
 import codesquad.service.QnaService;
+import codesquad.web.dto.Pages;
+import codesquad.web.dto.QuestionsDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,10 +21,12 @@ public class HomeController {
     }
 
     @GetMapping("/")
-    public String home(Model model) {
-        Iterable<Question> questions = qnaService.findAll();
+    public String home(Model model, @PageableDefault(size = 5) Pageable pageable) {
+        Page<Question> questions = qnaService.findAll(pageable);
 
-        model.addAttribute("questions", questions);
+        model.addAttribute("questions", QuestionsDto.of(questions, "/"));
+        model.addAttribute("pages", Pages.of(questions, pageable, "/"));
+
         return "home";
     }
 }
