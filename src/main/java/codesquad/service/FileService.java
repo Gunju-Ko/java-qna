@@ -25,7 +25,7 @@ public class FileService {
         } catch (IOException e) {
             throw new FileCreateException(e.getMessage());
         }
-        return new Photo(PhotoUtils.userPhotoLocation(file));
+        return Photo.of(PhotoUtils.userPhotoLocation(file));
     }
 
     private File createFile(User user, ImageFormat imageFormat) {

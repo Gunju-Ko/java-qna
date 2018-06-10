@@ -35,7 +35,12 @@ public class UserAcceptanceTest extends AcceptanceTest {
 
     @Test
     public void create() throws Exception {
-        User user = new User("testuser", "password", "자바지기", "javajigi@slipp.net");
+        User user = User.builder()
+                        .userId("gyusun")
+                        .password("test")
+                        .name("규선이")
+                        .email("gyusun@slipp.net")
+                        .build();
 
         ResponseEntity<String> response = template().postForEntity("/users", makeFormUrlEncodedRequest(user), String.class);
         assertThat(response.getStatusCode(), is(HttpStatus.FOUND));
@@ -69,7 +74,7 @@ public class UserAcceptanceTest extends AcceptanceTest {
     @Test
     @DirtiesContext
     public void update() throws Exception {
-        UpdateUserDto updateUserDto = UpdateUserDto.builder()
+        UpdateUserDto updateUserDto = UpdateUserDto.updateUserBuilder()
                                                    .userId("javajigi")
                                                    .password("test")
                                                    .name("자바지기2")
@@ -97,7 +102,7 @@ public class UserAcceptanceTest extends AcceptanceTest {
 
     @Test
     public void update_잘못된새로운비밀번호() throws Exception {
-        UpdateUserDto updateUser = UpdateUserDto.builder()
+        UpdateUserDto updateUser = UpdateUserDto.updateUserBuilder()
                                                 .userId("javajigi")
                                                 .password("test")
                                                 .name("자바지기")

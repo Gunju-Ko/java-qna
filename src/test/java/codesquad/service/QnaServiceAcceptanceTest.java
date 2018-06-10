@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+import support.UserTestMother;
 
 import java.util.Optional;
 
@@ -42,15 +43,24 @@ public class QnaServiceAcceptanceTest {
 
     private User gunju;
 
+    private Question updateQuestion;
+
     @Before
     public void setUp() throws Exception {
-        javajigi = new User(1, "javajigi", "test", "자바지기", "javajigi@slipp.net");
-        gunju = new User(2, "gunju", "test", "건주", "test@email.com");
+        javajigi = UserTestMother.javajigi();
+        gunju = UserTestMother.sanjigi();
+        updateQuestion = Question.builder()
+                                 .title("update")
+                                 .contents("update contents")
+                                 .build();
     }
 
     @Test
     public void create() throws Exception {
-        Question question = qnaService.create(javajigi, new Question("test", "test"));
+        Question question = qnaService.create(javajigi, Question.builder()
+                                                                .title("test")
+                                                                .contents("test")
+                                                                .build());
 
         assertThat(question).isNotNull();
         assertThat(questionRepository.findOne(question.getId())).isNotNull();
@@ -76,36 +86,35 @@ public class QnaServiceAcceptanceTest {
 
     @Test
     public void update() throws Exception {
-        Question question = qnaService.update(javajigi, 1, new Question("update", "update content"));
+        Question question = qnaService.update(javajigi, 1, updateQuestion);
         assertThat(question).isNotNull();
 
         Question dbQuestion = questionRepository.findOne(question.getId());
         assertThat(dbQuestion).isNotNull();
-        assertThat(dbQuestion.getTitle()).isEqualTo("update");
-        assertThat(dbQuestion.getContents()).isEqualTo("update content");
+        assertThat(dbQuestion.getTitle()).isEqualTo(updateQuestion.getTitle());
+        assertThat(dbQuestion.getContents()).isEqualTo(updateQuestion.getContents());
 
     }
 
     @Test(expected = PermissionDeniedException.class)
     public void update_권한이없는경우() throws Exception {
-        User user = new User(2, "sanjigi", "test", "산지기", "sanjigi@slipp.net");
-        qnaService.update(user, 1, new Question("update", "update content"));
+        qnaService.update(gunju, 1, updateQuestion);
     }
 
     @Test(expected = PermissionDeniedException.class)
     public void update_파라미터가NULL인경우() throws Exception {
-        qnaService.update(null, 1, new Question("update", "update content"));
+        qnaService.update(null, 1, updateQuestion);
 
     }
 
     @Test(expected = QuestionNotFoundException.class)
     public void update_해당Question이존재하지않는경우() throws Exception {
-        qnaService.update(javajigi, 10, new Question("update", "update content"));
+        qnaService.update(javajigi, 10, updateQuestion);
     }
 
     @Test(expected = QuestionNotFoundException.class)
     public void update_해당Question삭제된경우() throws Exception {
-        qnaService.update(javajigi, 3, new Question("update", "update content"));
+        qnaService.update(javajigi, 3, updateQuestion);
     }
 
     @Test
@@ -123,8 +132,7 @@ public class QnaServiceAcceptanceTest {
 
     @Test(expected = PermissionDeniedException.class)
     public void deleteQuestion_권한이없는경우() throws Exception {
-        User user = new User(2, "sanjigi", "test", "산지기", "sanjigi@slipp.net");
-        qnaService.deleteQuestion(user, 1);
+        qnaService.deleteQuestion(gunju, 1);
     }
 
     @Test(expected = QuestionNotFoundException.class)
@@ -135,7 +143,11 @@ public class QnaServiceAcceptanceTest {
     @Test
     public void addAnswer() throws Exception {
         Question question = questionRepository.findOne(1L);
-        Answer answer = new Answer(javajigi, "test contents");
+        Answer answer = Answer.builder()
+                              .writer(javajigi)
+                              .contents("test contents")
+                              .build();
+
         qnaService.addAnswer(answer, 1L);
 
         assertThat(question.getCountOfAnswers()).isEqualTo(3);
@@ -143,7 +155,10 @@ public class QnaServiceAcceptanceTest {
 
     @Test
     public void updateAnswer() throws Exception {
-        Answer updateAnswer = new Answer(javajigi, "내용 업데이트");
+        Answer updateAnswer = Answer.builder()
+                                    .writer(javajigi)
+                                    .contents("내용 업데이트")
+                                    .build();
 
         qnaService.updateAnswer(1L, updateAnswer);
         Answer dbAnswer = answerRepository.findOne(1L);

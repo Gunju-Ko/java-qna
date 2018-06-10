@@ -2,8 +2,8 @@ package codesquad.web;
 
 import codesquad.domain.Question;
 import codesquad.domain.QuestionRepository;
-import codesquad.domain.User;
 import codesquad.web.dto.QuestionDto;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -11,6 +11,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
+import support.UserTestMother;
 import support.test.AcceptanceTest;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -22,6 +23,23 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
     @Autowired
     private QuestionRepository repository;
 
+    private QuestionDto question;
+
+    private QuestionDto updateQuestion;
+
+    @Before
+    public void setUp() throws Exception {
+        question = QuestionDto.builder()
+                              .title("title")
+                              .contents("contents")
+                              .build();
+
+        updateQuestion = QuestionDto.builder()
+                                    .title("update title")
+                                    .contents("update contents")
+                                    .build();
+    }
+
     @Test
     public void questionsForm() throws Exception {
         ResponseEntity<String> response = template().getForEntity("/questions/form", String.class);
@@ -31,10 +49,8 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
     @Test
     @DirtiesContext
     public void create() throws Exception {
-        QuestionDto questionDto = new QuestionDto("test", "test context");
-
         ResponseEntity<String> response = basicAuthTemplate(defaultUser()).postForEntity("/questions",
-                                                                                         makeFormUrlEncodedRequest(questionDto),
+                                                                                         makeFormUrlEncodedRequest(question),
                                                                                          String.class);
         assertThat(response.getStatusCode(), is(HttpStatus.FOUND));
         assertThat(repository.findByWriter(defaultUser()).size(), is(3));
@@ -42,10 +58,10 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
 
     @Test
     public void create_잘못된질문형식_TITLE이3보다작은경우() throws Exception {
-        QuestionDto questionDto = new QuestionDto("t", "test");
+        question.setTitle("t");
 
         ResponseEntity<String> response = basicAuthTemplate(defaultUser()).postForEntity("/questions",
-                                                                                         makeFormUrlEncodedRequest(questionDto),
+                                                                                         makeFormUrlEncodedRequest(question),
                                                                                          String.class);
         assertThat(response.getStatusCode(), is(HttpStatus.BAD_REQUEST));
     }
@@ -70,9 +86,7 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
 
     @Test
     public void updateForm_권한이없는사용자() throws Exception {
-        User user = new User("sanjigi", "test", "산지기", "sanjigi@slipp.net");
-
-        ResponseEntity<String> response = basicAuthTemplate(user).getForEntity("/questions/1/form", String.class);
+        ResponseEntity<String> response = basicAuthTemplate(UserTestMother.sanjigi()).getForEntity("/questions/1/form", String.class);
         assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN));
     }
 
@@ -85,27 +99,24 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
     @Test
     @DirtiesContext
     public void update() throws Exception {
-        QuestionDto questionDto = new QuestionDto("update", "update test");
         ResponseEntity<String> response = basicAuthTemplate(defaultUser()).exchange("/questions/1",
                                                                                     HttpMethod.PUT,
-                                                                                    makeFormUrlEncodedRequest(questionDto),
+                                                                                    makeFormUrlEncodedRequest(updateQuestion),
                                                                                     String.class);
 
         assertThat(response.getStatusCode(), is(HttpStatus.FOUND));
         Question question = repository.findOne(1L);
 
-        assertThat(question.getTitle(), is("update"));
-        assertThat(question.getContents(), is("update test"));
+        assertThat(question.getTitle(), is(updateQuestion.getTitle()));
+        assertThat(question.getContents(), is(updateQuestion.getContents()));
     }
 
     @Test
     public void update_권한이없는사용자() throws Exception {
-        User user = new User("sanjigi", "test", "산지기", "sanjigi@slipp.net");
-        QuestionDto questionDto = new QuestionDto("update", "update test");
-        ResponseEntity<String> response = basicAuthTemplate(user).exchange("/questions/1",
-                                                                           HttpMethod.PUT,
-                                                                           makeFormUrlEncodedRequest(questionDto),
-                                                                           String.class);
+        ResponseEntity<String> response = basicAuthTemplate(UserTestMother.sanjigi()).exchange("/questions/1",
+                                                                                               HttpMethod.PUT,
+                                                                                               makeFormUrlEncodedRequest(updateQuestion),
+                                                                                               String.class);
 
         assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN));
     }
@@ -130,9 +141,8 @@ public class QuestionAcceptanceTest extends AcceptanceTest {
 
     @Test
     public void delete_권한이없는사용자() throws Exception {
-        User user = new User("sanjigi", "test", "산지기", "sanjigi@slipp.net");
-        ResponseEntity<String> response = basicAuthTemplate(user).exchange("/questions/1", HttpMethod.DELETE,
-                                                                           HttpEntity.EMPTY, String.class);
+        ResponseEntity<String> response = basicAuthTemplate(UserTestMother.sanjigi()).exchange("/questions/1", HttpMethod.DELETE,
+                                                                                               HttpEntity.EMPTY, String.class);
         assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN));
     }
 }

@@ -1,13 +1,20 @@
 package codesquad.web.dto;
 
 import codesquad.domain.User;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import org.hibernate.validator.constraints.Email;
 
 import javax.validation.constraints.Size;
 
 @Data
+@Builder
+@AllArgsConstructor
 public class UserDto {
+
+    private long id;
+
     @Size(min = 3, max = 20)
     private String userId;
 
@@ -23,15 +30,12 @@ public class UserDto {
     public UserDto() {
     }
 
-    public UserDto(String userId, String password, String name, String email) {
-        super();
-        this.userId = userId;
-        this.password = password;
-        this.name = name;
-        this.email = email;
-    }
-
     public User toUser() {
-        return new User(this.userId, this.password, this.name, this.email);
+        return User.builder()
+                   .userId(userId)
+                   .password(password)
+                   .name(name)
+                   .email(email)
+                   .build();
     }
 }

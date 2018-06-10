@@ -2,6 +2,8 @@ package codesquad.domain;
 
 import codesquad.common.exception.PermissionDeniedException;
 import codesquad.web.dto.AnswerDto;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import support.domain.AbstractEntity;
 import support.domain.ApiUrlGeneratable;
 import support.domain.UrlGeneratable;
@@ -15,6 +17,8 @@ import javax.validation.constraints.Size;
 import java.net.URI;
 import java.time.LocalDateTime;
 
+@Builder
+@AllArgsConstructor
 @Entity
 public class Answer extends AbstractEntity implements UrlGeneratable, ApiUrlGeneratable {
     @ManyToOne
@@ -34,47 +38,12 @@ public class Answer extends AbstractEntity implements UrlGeneratable, ApiUrlGene
     public Answer() {
     }
 
-    public Answer(User writer, String contents) {
-        this.writer = writer;
-        this.contents = contents;
+    @Override
+    public String generateUrl() {
+        return String.format("%s/answers/%d", question.generateUrl(), getId());
     }
 
-    public Answer(Long id, User writer, Question question, String contents) {
-        super(id);
-        this.writer = writer;
-        this.question = question;
-        this.contents = contents;
-        this.deleted = false;
-    }
-
-    public User getWriter() {
-        return writer;
-    }
-
-    public Question getQuestion() {
-        return question;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void toQuestion(Question question) {
-        this.question = question;
-    }
-
-    public boolean isOwner(User loginUser) {
-        return writer.equals(loginUser);
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public AnswerDto toAnswerDto() {
-        return new AnswerDto(getId(), contents);
-    }
-
+    @Override
     public URI generateApiUri() {
         String apiUri = "/api" + generateUrl();
         return URI.create(apiUri);
@@ -102,9 +71,49 @@ public class Answer extends AbstractEntity implements UrlGeneratable, ApiUrlGene
         }
     }
 
-    @Override
-    public String generateUrl() {
-        return String.format("%s/answers/%d", question.generateUrl(), getId());
+    public boolean isOwner(User loginUser) {
+        return writer.equals(loginUser);
+    }
+
+    public void writerBy(User writer) {
+        if (this.writer != null && !this.writer.equals(writer)) {
+            throw new IllegalStateException("Can not change writer");
+        }
+        this.writer = writer;
+    }
+
+    public AnswerDto toAnswerDto() {
+        AnswerDto.AnswerDtoBuilder builder = AnswerDto.builder()
+                                                      .id(getId())
+                                                      .contents(this.contents)
+                                                      .deleted(this.isDeleted());
+        if (this.writer != null) {
+            builder.writer(this.writer.toUserDto());
+        }
+        return builder.build();
+    }
+
+    public User getWriter() {
+        return writer;
+    }
+
+    public Question getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(Question question) {
+        if (this.question != null && !this.question.equals(question)) {
+            throw new IllegalStateException("This answer already has a question");
+        }
+        this.question = question;
+    }
+
+    public String getContents() {
+        return contents;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
     }
 
     @Override

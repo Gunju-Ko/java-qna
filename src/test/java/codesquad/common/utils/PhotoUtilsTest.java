@@ -11,7 +11,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class PhotoUtilsTest {
     @Test
     public void getUserImagePath() throws Exception {
-        User user = new User("test", "password", "name", "email");
+        User user = User.builder()
+                        .userId("test")
+                        .password("password")
+                        .name("name")
+                        .email("test@slipp.net")
+                        .build();
+
         assertThat(PhotoUtils.userPhotoAbsolutePath(user,
                                                     ImageFormat.JPG)).isEqualTo("/Users/skp/my/qna/images/users/test.jpg");
     }

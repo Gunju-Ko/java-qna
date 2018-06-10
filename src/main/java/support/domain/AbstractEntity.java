@@ -73,10 +73,7 @@ public class AbstractEntity {
             return false;
         }
         AbstractEntity other = (AbstractEntity) obj;
-        if (id != other.id) {
-            return false;
-        }
-        return true;
+        return id == other.id;
     }
 
     @Override

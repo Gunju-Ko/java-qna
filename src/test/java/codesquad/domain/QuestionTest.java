@@ -4,6 +4,7 @@ import codesquad.common.exception.CannotDeleteException;
 import codesquad.common.exception.PermissionDeniedException;
 import org.junit.Before;
 import org.junit.Test;
+import support.UserTestMother;
 
 import java.util.List;
 
@@ -13,29 +14,42 @@ public class QuestionTest {
 
     private Question question;
 
-    private User defaultUser;
+    private Question updateQuestion;
 
-    private static boolean compareTitleAndContents(Question o1, Question o2) {
-        if (o1 == null || o2 == null) {
-            return false;
-        }
-        return o1.getTitle().equals(o2.getTitle()) && o1.getContents().equals(o2.getContents());
-    }
+    private User javajigi;
+
+    private User gunju;
+
 
     @Before
     public void setUp() throws Exception {
-        defaultUser = new User(1, "javajigi", "test", "자바지기", "javajigi@slipp.net");
-        question = new Question("test", "content");
-        question.writeBy(defaultUser);
+        javajigi = UserTestMother.javajigi();
+        gunju = UserTestMother.gunju();
 
-        Answer answer = new Answer(defaultUser, "테스트 답변");
-        answer.toQuestion(question);
+        question = Question.builder()
+                           .title("title")
+                           .contents("contents")
+                           .writer(javajigi)
+                           .answers(new Answers())
+                           .build();
+
+        updateQuestion = Question.builder()
+                                 .title("update title")
+                                 .contents("update contents")
+                                 .answers(new Answers())
+                                 .build();
+
+        Answer answer = Answer.builder()
+                              .writer(javajigi)
+                              .contents("테스트 답변")
+                              .build();
+
         question.addAnswer(answer);
     }
 
     @Test
     public void delete() throws Exception {
-        List<DeleteHistory> histories = question.delete(defaultUser);
+        List<DeleteHistory> histories = question.delete(javajigi);
         assertThat(question.isDeleted()).isTrue();
         assertThat(histories.size()).isEqualTo(2);
         assertThat(question.getCountOfAnswers()).isEqualTo(0);
@@ -43,36 +57,41 @@ public class QuestionTest {
 
     @Test(expected = PermissionDeniedException.class)
     public void delete_권한이없는유저() throws Exception {
-        User user = new User(3, "gunju", "test", "고건주", "gunju@slipp.net");
-        question.delete(user);
+        question.delete(gunju);
     }
 
     @Test
     public void isOwner() throws Exception {
-        assertThat(question.isOwner(defaultUser)).isTrue();
-        assertThat(question.isOwner(new User(3, "gunju", "test", "고건주", "gunju@slipp.net"))).isFalse();
+        assertThat(question.isOwner(javajigi)).isTrue();
+        assertThat(question.isOwner(gunju)).isFalse();
     }
 
     @Test(expected = PermissionDeniedException.class)
     public void update_권한이없는유저() throws Exception {
-        User user = new User(3, "gunju", "test", "고건주", "gunju@slipp.net");
-        question.update(user, new Question("test", "test"));
+        question.update(gunju, updateQuestion);
     }
 
     @Test
     public void update() throws Exception {
-        Question updatedQuestion = new Question("update", "update test");
-        question.update(defaultUser, updatedQuestion);
-        assertThat(compareTitleAndContents(question, updatedQuestion)).isTrue();
+        question.update(javajigi, updateQuestion);
+        assertThat(compareTitleAndContents(question, updateQuestion)).isTrue();
     }
 
     @Test(expected = CannotDeleteException.class)
     public void delete_로그인한유저가작성하지않은답변이있는경우() throws Exception {
-        User gunju = new User(3, "gunju", "test", "고건주", "gunju@slipp.net");
-
-        Answer answer = new Answer(gunju, "테스트 답변2");
+        Answer answer = Answer.builder()
+                              .writer(gunju)
+                              .contents("테스트 답변2")
+                              .build();
         question.addAnswer(answer);
-        question.delete(defaultUser);
+        question.delete(javajigi);
+    }
+
+    private boolean compareTitleAndContents(Question o1, Question o2) {
+        if (o1 == null || o2 == null) {
+            return false;
+        }
+        return o1.getTitle().equals(o2.getTitle()) && o1.getContents().equals(o2.getContents());
     }
 
 }

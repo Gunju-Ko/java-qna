@@ -30,7 +30,7 @@ public class ApiUserAcceptanceTest extends AcceptanceTest {
         String location = response.getHeaders().getLocation().getPath();
 
         UserDto dbUser = basicAuthTemplate(findByUserId(newUser.getUserId())).getForObject(location, UserDto.class);
-        assertThat(dbUser, is(newUser));
+        assertThat(dbUser.getUserId(), is(newUser.getUserId()));
     }
 
     @Test
@@ -44,37 +44,40 @@ public class ApiUserAcceptanceTest extends AcceptanceTest {
         assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN));
     }
 
-    private UserDto createUserDto(String userId) {
-        return new UserDto(userId, "password", "name", "javajigi@slipp.net");
-    }
-
     @Test
     public void update() throws Exception {
+        // given
         UserDto newUser = createUserDto("testuser3");
         ResponseEntity<String> response = template().postForEntity("/api/users", newUser, String.class);
         assertThat(response.getStatusCode(), is(HttpStatus.CREATED));
         String location = response.getHeaders().getLocation().getPath();
 
+        // when
         User loginUser = findByUserId(newUser.getUserId());
-        UserDto updateUser = new UserDto(newUser.getUserId(), "password", "name2", "javajigi@slipp.net2");
+        UserDto updateUser = createUserDto(newUser.getUserId());
+        updateUser.setName("update name");
         basicAuthTemplate(loginUser).put(location, updateUser);
 
+        // then
         UserDto dbUser = basicAuthTemplate(findByUserId(newUser.getUserId())).getForObject(location, UserDto.class);
-        assertThat(dbUser, is(updateUser));
+        assertThat(dbUser.getName(), is(updateUser.getName()));
     }
 
     @Test
     public void update_다른_사람() throws Exception {
+        // given
         UserDto newUser = createUserDto("testuser4");
         ResponseEntity<String> response = template().postForEntity("/api/users", newUser, String.class);
         assertThat(response.getStatusCode(), is(HttpStatus.CREATED));
         String location = response.getHeaders().getLocation().getPath();
 
-        UserDto updateUser = new UserDto(newUser.getUserId(), "password", "name2", "javajigi@slipp.net2");
+        // when
+        UserDto updateUser = createUserDto(newUser.getUserId());
+        updateUser.setName("update name");
         basicAuthTemplate(defaultUser()).put(location, updateUser);
 
         UserDto dbUser = basicAuthTemplate(findByUserId(newUser.getUserId())).getForObject(location, UserDto.class);
-        assertThat(dbUser, is(newUser));
+        assertThat(dbUser.getName(), is(newUser.getName()));
     }
 
     @Test
@@ -95,6 +98,15 @@ public class ApiUserAcceptanceTest extends AcceptanceTest {
                                                                                     getMultipartHttpEntity(), String.class);
 
         assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN));
+    }
+
+    private UserDto createUserDto(String userId) {
+        return UserDto.builder()
+                      .userId(userId)
+                      .password("password")
+                      .name("name")
+                      .email("javajigi@slipp.net")
+                      .build();
     }
 
     private HttpEntity<MultiValueMap<String, Object>> getMultipartHttpEntity() {
