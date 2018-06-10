@@ -41,7 +41,10 @@ public class AnswerController {
     public String create(@LoginUser User loginUser,
                          @PathVariable long questionId,
                          @Valid AnswerDto answerDto) {
-        qnaService.addAnswer(answerDto.toAnswer(loginUser), questionId);
+        Answer answer = answerDto.toAnswer();
+        answer.writerBy(loginUser);
+
+        qnaService.addAnswer(answer, questionId);
         return "redirect:/questions/" + questionId;
     }
 
@@ -50,7 +53,10 @@ public class AnswerController {
                          @PathVariable long questionId,
                          @PathVariable long id,
                          @Valid AnswerDto answerDto) {
-        qnaService.updateAnswer(id, answerDto.toAnswer(loginUser));
+        Answer answer = answerDto.toAnswer();
+        answer.writerBy(loginUser);
+
+        qnaService.updateAnswer(id, answer);
         return "redirect:/questions/" + questionId;
     }
 

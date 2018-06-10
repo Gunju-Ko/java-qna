@@ -3,6 +3,7 @@ package codesquad.domain;
 import codesquad.common.exception.PermissionDeniedException;
 import org.junit.Before;
 import org.junit.Test;
+import support.UserTestMother;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -16,10 +17,13 @@ public class AnswerTest {
 
     @Before
     public void setUp() throws Exception {
-        javajigi = new User(1, "javajigi", "test", "자바지기", "javajigi@slipp.net");
-        gunju = new User(2, "gunju", "test", "건주", "test@email.com");
+        javajigi = UserTestMother.javajigi();
+        gunju = UserTestMother.gunju();
 
-        answer = new Answer(javajigi, "test contents");
+        answer = Answer.builder()
+                       .writer(javajigi)
+                       .contents("test contents")
+                       .build();
     }
 
     @Test
@@ -30,7 +34,10 @@ public class AnswerTest {
 
     @Test
     public void update() throws Exception {
-        Answer updateAnswer = new Answer(javajigi, "update test");
+        Answer updateAnswer = Answer.builder()
+                                    .writer(javajigi)
+                                    .contents("update test")
+                                    .build();
         answer.update(updateAnswer);
 
         assertThat(answer.getContents()).isEqualTo("update test");
@@ -38,7 +45,11 @@ public class AnswerTest {
 
     @Test(expected = PermissionDeniedException.class)
     public void update_권한이없는사용자() throws Exception {
-        Answer updateAnswer = new Answer(gunju, "update test");
+        Answer updateAnswer = Answer.builder()
+                                    .writer(gunju)
+                                    .contents("update test")
+                                    .build();
+
         answer.update(updateAnswer);
     }
 

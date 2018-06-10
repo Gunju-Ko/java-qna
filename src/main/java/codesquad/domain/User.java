@@ -4,6 +4,8 @@ import codesquad.common.exception.InvalidPasswordException;
 import codesquad.common.exception.PermissionDeniedException;
 import codesquad.web.dto.UserDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Email;
 import support.domain.AbstractEntity;
@@ -15,11 +17,14 @@ import javax.persistence.Entity;
 import javax.validation.constraints.Size;
 import java.net.URI;
 
+@AllArgsConstructor
+@Builder
 @Entity
 public class User extends AbstractEntity implements ApiUrlGeneratable {
     public static final GuestUser GUEST_USER = new GuestUser();
 
     private static final String DEFAULT_IMAGE = "/images/users/default_image.png";
+
     @Size(min = 3, max = 20)
     @Column(unique = true, nullable = false, length = 20)
     private String userId;
@@ -43,16 +48,52 @@ public class User extends AbstractEntity implements ApiUrlGeneratable {
     public User() {
     }
 
-    public User(String userId, String password, String name, String email) {
-        this(0L, userId, password, name, email);
-    }
-
     public User(long id, String userId, String password, String name, String email) {
         super(id);
         this.userId = userId;
         this.password = password;
         this.name = name;
         this.email = email;
+    }
+
+    @Override
+    public URI generateApiUri() {
+        return URI.create("/api/users/" + getId());
+    }
+
+    @JsonIgnore
+    public boolean isGuestUser() {
+        return false;
+    }
+
+    public void update(User loginUser, User target, String updatePassword) {
+        if (!matchUserId(loginUser.getUserId())) {
+            throw new PermissionDeniedException();
+        }
+
+        if (!matchPassword(target.getPassword())) {
+            throw new InvalidPasswordException();
+        }
+
+        this.name = target.name;
+        this.email = target.email;
+        if (StringUtils.isNotEmpty(updatePassword)) {
+            this.password = updatePassword;
+        }
+    }
+
+    public boolean matchPassword(String password) {
+        return this.password.equals(password);
+    }
+
+    public UserDto toUserDto() {
+        return UserDto.builder()
+                      .id(getId())
+                      .userId(this.userId)
+                      .password(this.password)
+                      .name(this.name)
+                      .email(this.email)
+                      .build();
     }
 
     public String getUserId() {
@@ -80,40 +121,6 @@ public class User extends AbstractEntity implements ApiUrlGeneratable {
 
     public void setPhoto(Photo photo) {
         this.photo = photo;
-    }
-
-    public void update(User loginUser, User target, String updatePassword) {
-        if (!matchUserId(loginUser.getUserId())) {
-            throw new PermissionDeniedException();
-        }
-
-        if (!matchPassword(target.getPassword())) {
-            throw new InvalidPasswordException();
-        }
-
-        this.name = target.name;
-        this.email = target.email;
-        if (StringUtils.isNotEmpty(updatePassword)) {
-            this.password = updatePassword;
-        }
-    }
-
-    public boolean matchPassword(String password) {
-        return this.password.equals(password);
-    }
-
-    public UserDto toUserDto() {
-        return new UserDto(this.userId, this.password, this.name, this.email);
-    }
-
-    @Override
-    public URI generateApiUri() {
-        return URI.create("/api/users/" + getId());
-    }
-
-    @JsonIgnore
-    public boolean isGuestUser() {
-        return false;
     }
 
     private boolean matchUserId(String userId) {

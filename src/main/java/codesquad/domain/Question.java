@@ -2,6 +2,8 @@ package codesquad.domain;
 
 import codesquad.common.exception.PermissionDeniedException;
 import codesquad.web.dto.QuestionDto;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import support.domain.AbstractEntity;
 import support.domain.ApiUrlGeneratable;
 import support.domain.UrlGeneratable;
@@ -18,6 +20,8 @@ import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Builder
+@AllArgsConstructor
 @Entity
 public class Question extends AbstractEntity implements UrlGeneratable, ApiUrlGeneratable {
     @Size(min = 3, max = 100)
@@ -40,29 +44,15 @@ public class Question extends AbstractEntity implements UrlGeneratable, ApiUrlGe
     public Question() {
     }
 
-    public Question(String title, String contents) {
-        this.title = title;
-        this.contents = contents;
+    @Override
+    public String generateUrl() {
+        return String.format("/questions/%d", getId());
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public User getWriter() {
-        return writer;
-    }
-
-    public List<Answer> getAnswers() {
-        return answers.getAnswers();
-    }
-
-    public int getCountOfAnswers() {
-        return answers.getCountOfAnswers();
+    @Override
+    public URI generateApiUri() {
+        String apiUri = "/api" + generateUrl();
+        return URI.create(apiUri);
     }
 
     public void writeBy(User loginUser) {
@@ -70,19 +60,8 @@ public class Question extends AbstractEntity implements UrlGeneratable, ApiUrlGe
     }
 
     public void addAnswer(Answer answer) {
-        answer.toQuestion(this);
+        answer.setQuestion(this);
         answers.addAnswer(answer);
-    }
-
-    public boolean isOwner(User loginUser) {
-        if (this.writer == null) {
-            throw new IllegalStateException();
-        }
-        return writer.equals(loginUser);
-    }
-
-    public boolean isDeleted() {
-        return deleted;
     }
 
     public List<DeleteHistory> delete(User loginUser) {
@@ -105,8 +84,11 @@ public class Question extends AbstractEntity implements UrlGeneratable, ApiUrlGe
         return this;
     }
 
-    public QuestionDto toQuestionDto() {
-        return new QuestionDto(getId(), this.title, this.contents, this.writer.toUserDto());
+    public boolean isOwner(User loginUser) {
+        if (this.writer == null) {
+            throw new IllegalStateException();
+        }
+        return writer.equals(loginUser);
     }
 
     public void checkAuthority(User loginUser) {
@@ -115,15 +97,43 @@ public class Question extends AbstractEntity implements UrlGeneratable, ApiUrlGe
         }
     }
 
-    @Override
-    public String generateUrl() {
-        return String.format("/questions/%d", getId());
+    public QuestionDto toQuestionDto() {
+        QuestionDto.QuestionDtoBuilder builder = QuestionDto.builder();
+
+        builder.id(this.getId())
+               .title(this.title)
+               .contents(this.contents)
+               .deleted(this.deleted);
+
+        if (this.writer != null) {
+            builder.writer(this.writer.toUserDto());
+        }
+
+        return builder.build();
     }
 
-    @Override
-    public URI generateApiUri() {
-        String apiUri = "/api" + generateUrl();
-        return URI.create(apiUri);
+    public String getTitle() {
+        return title;
+    }
+
+    public String getContents() {
+        return contents;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public User getWriter() {
+        return writer;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers.getAnswers();
+    }
+
+    public int getCountOfAnswers() {
+        return answers.getCountOfAnswers();
     }
 
     @Override

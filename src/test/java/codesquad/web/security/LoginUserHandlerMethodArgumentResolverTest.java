@@ -10,6 +10,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.WebRequest;
+import support.UserTestMother;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -35,7 +36,7 @@ public class LoginUserHandlerMethodArgumentResolverTest {
 
     @Test
     public void loginUser_normal() throws Exception {
-        User sessionUser = new User("sanjigi", "password", "name", "javajigi@slipp.net");
+        User sessionUser = UserTestMother.sanjigi();
         when(request.getAttribute(HttpSessionUtils.USER_SESSION_KEY, WebRequest.SCOPE_SESSION)).thenReturn(sessionUser);
 
         User loginUser = (User) loginUserHandlerMethodArgumentResolver.resolveArgument(parameter, null, request, null);

@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import support.UserTestMother;
 
 import java.util.Optional;
 
@@ -25,7 +26,7 @@ public class UserServiceTest {
 
     @Test
     public void login_success() throws Exception {
-        User user = new User("sanjigi", "password", "name", "javajigi@slipp.net");
+        User user = UserTestMother.sanjigi();
         when(userRepository.findByUserId(user.getUserId())).thenReturn(Optional.of(user));
 
         User loginUser = userService.login(user.getUserId(), user.getPassword());
@@ -41,7 +42,7 @@ public class UserServiceTest {
 
     @Test(expected = UnAuthenticationException.class)
     public void login_failed_when_mismatch_password() throws Exception {
-        User user = new User("sanjigi", "password", "name", "javajigi@slipp.net");
+        User user = UserTestMother.sanjigi();
         when(userRepository.findByUserId(user.getUserId())).thenReturn(Optional.of(user));
 
         userService.login(user.getUserId(), user.getPassword() + "2");

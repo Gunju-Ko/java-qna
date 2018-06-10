@@ -38,16 +38,22 @@ public class ApiAnswerController {
     public ResponseEntity<Void> create(@LoginUser User loginUser,
                                        @PathVariable long questionId,
                                        @RequestBody @Valid AnswerDto answerDto) {
-        Answer answer = qnaService.addAnswer(answerDto.toAnswer(loginUser), questionId);
-        return new ResponseEntity<>(answer.makeHttpHeaders(), HttpStatus.CREATED);
+        Answer answer = answerDto.toAnswer();
+        answer.writerBy(loginUser);
+
+        Answer result = qnaService.addAnswer(answer, questionId);
+        return new ResponseEntity<>(result.makeHttpHeaders(), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> update(@LoginUser User loginUser,
                                        @PathVariable long id,
                                        @RequestBody @Valid AnswerDto answerDto) {
-        Answer answer = qnaService.updateAnswer(id, answerDto.toAnswer(loginUser));
-        return new ResponseEntity<>(answer.makeHttpHeaders(), HttpStatus.NO_CONTENT);
+        Answer answer = answerDto.toAnswer();
+        answer.writerBy(loginUser);
+
+        Answer result = qnaService.updateAnswer(id, answer);
+        return new ResponseEntity<>(result.makeHttpHeaders(), HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping("/{id}")

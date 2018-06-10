@@ -15,24 +15,25 @@ public class UpdateUserDto extends UserDto {
     public UpdateUserDto() {
     }
 
-    private UpdateUserDto(String userId,
+    private UpdateUserDto(long id,
+                          String userId,
                           String password,
                           String name,
                           String email,
                           String updatePassword,
                           String confirmUpdatePassword) {
-        super(userId, password, name, email);
+        super(id, userId, password, name, email);
         this.updatePassword = updatePassword;
         this.confirmUpdatePassword = confirmUpdatePassword;
     }
 
-    public static UpdateUserDtoBuilder builder() {
+    public static UpdateUserDtoBuilder updateUserBuilder() {
         return new UpdateUserDtoBuilder();
     }
 
     public boolean isValidUpdatePassword() {
-        if (StringUtils.isEmpty(updatePassword)) {
-            return StringUtils.isEmpty(confirmUpdatePassword);
+        if (StringUtils.isEmpty(updatePassword) || StringUtils.isEmpty(confirmUpdatePassword)) {
+            return false;
         }
         if (updatePassword.length() < 4 || updatePassword.length() > 20) {
             return false;
@@ -41,6 +42,7 @@ public class UpdateUserDto extends UserDto {
     }
 
     public static final class UpdateUserDtoBuilder {
+        private long id;
         private String password;
         private String name;
         private String email;
@@ -51,7 +53,12 @@ public class UpdateUserDto extends UserDto {
         private UpdateUserDtoBuilder() {}
 
         public UpdateUserDto build() {
-            return new UpdateUserDto(userId, password, name, email, updatePassword, confirmUpdatePassword);
+            return new UpdateUserDto(id, userId, password, name, email, updatePassword, confirmUpdatePassword);
+        }
+
+        public UpdateUserDtoBuilder id(long id) {
+            this.id = id;
+            return this;
         }
 
         public UpdateUserDtoBuilder password(String password) {

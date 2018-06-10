@@ -11,15 +11,19 @@ public class Photo implements ApiUrlGeneratable {
 
     private String location;
 
-    public Photo(String location) {
-        this.location = Objects.requireNonNull(location);
+    public Photo() {
     }
 
-    public Photo() {
+    private Photo(String location) {
+        this.location = Objects.requireNonNull(location);
     }
 
     public String getLocation() {
         return location;
+    }
+
+    public static Photo of(String location) {
+        return new Photo(location);
     }
 
     @Override

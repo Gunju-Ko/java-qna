@@ -4,6 +4,7 @@ import codesquad.domain.User;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import support.UserTestMother;
 import support.test.AcceptanceTest;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -20,7 +21,7 @@ public class LoginAcceptanceTest extends AcceptanceTest {
 
     @Test
     public void login_성공() throws Exception {
-        User javajigi = new User(1, "javajigi", "test", "자바지기", "javajigi@slipp.net");
+        User javajigi = UserTestMother.javajigi();
 
         ResponseEntity<String> response = template().postForEntity("/login", makeFormUrlEncodedRequest(javajigi), String.class);
         assertThat(response.getStatusCode(), is(HttpStatus.FOUND));
@@ -28,25 +29,39 @@ public class LoginAcceptanceTest extends AcceptanceTest {
 
     @Test
     public void login_패스워드가다른경우() throws Exception {
-        User javajigi = new User(1, "javajigi", "wrong", "자바지기", "javajigi@slipp.net");
+        User javajigi = User.builder()
+                            .userId("javajigi")
+                            .password("test2")  // wrong password
+                            .name("자바지기")
+                            .email("javajigi@slipp.net")
+                            .build();
 
         ResponseEntity<String> response = template().postForEntity("/login", makeFormUrlEncodedRequest(javajigi), String.class);
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
     }
 
     @Test
-    public void login_아이디패스워드가없는경우() throws Exception {
-        User test = new User(1, null, null, "자바지기", "javajigi@slipp.net");
-
-        ResponseEntity<String> response = template().postForEntity("/login", makeFormUrlEncodedRequest(test), String.class);
+    public void login_아이디가없는경우() throws Exception {
+        User javajigi = User.builder()
+                            .userId(null)
+                            .password("test2")
+                            .name("자바지기")
+                            .email("javajigi@slipp.net")
+                            .build();
+        ResponseEntity<String> response = template().postForEntity("/login", makeFormUrlEncodedRequest(javajigi), String.class);
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
     }
 
     @Test
     public void login_존재하지않는회원() throws Exception {
-        User gunju = new User(3, "존재하지않는회원", "test", "테스트", "gunju@slipp.net");
+        User user = User.builder()
+                        .userId("gyusun")
+                        .password("test")
+                        .name("규선이")
+                        .email("gyusun@slipp.net")
+                        .build();
 
-        ResponseEntity<String> response = template().postForEntity("/login", makeFormUrlEncodedRequest(gunju), String.class);
+        ResponseEntity<String> response = template().postForEntity("/login", makeFormUrlEncodedRequest(user), String.class);
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
     }
 
