@@ -1,5 +1,6 @@
 package codesquad.domain;
 
+import codesquad.web.dto.PhotoDto;
 import support.domain.ApiUrlGeneratable;
 
 import javax.persistence.Embeddable;
@@ -14,16 +15,23 @@ public class Photo implements ApiUrlGeneratable {
     public Photo() {
     }
 
-    private Photo(String location) {
+    public Photo(String location) {
         this.location = Objects.requireNonNull(location);
-    }
-
-    public String getLocation() {
-        return location;
     }
 
     public static Photo of(String location) {
         return new Photo(location);
+    }
+
+    public static Photo of(PhotoDto photo) {
+        if (photo == null) {
+            return null;
+        }
+        return new Photo(photo.getLocation());
+    }
+
+    public String getLocation() {
+        return location;
     }
 
     @Override

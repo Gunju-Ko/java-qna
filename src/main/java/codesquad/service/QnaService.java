@@ -92,6 +92,10 @@ public class QnaService {
         return answer;
     }
 
+    public Page<Answer> findAnswerByQuestion(Question question, Pageable pageable) {
+        return answerRepository.findByQuestion(question, pageable);
+    }
+
     public Iterable<Question> findAll() {
         return questionRepository.findByDeleted(false);
     }

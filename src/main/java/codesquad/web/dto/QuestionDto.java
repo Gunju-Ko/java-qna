@@ -25,6 +25,12 @@ public class QuestionDto {
 
     private boolean deleted = false;
 
+    private int countOfAnswers;
+
+    private String formattedCreateDate;
+
+    private AnswersDto answer;
+
     public QuestionDto() {
     }
 

@@ -1,5 +1,6 @@
 package codesquad.web.api;
 
+import codesquad.web.dto.AnswersDto;
 import codesquad.web.dto.Link;
 import codesquad.web.dto.QuestionDto;
 import codesquad.web.dto.QuestionsDto;
@@ -63,6 +64,34 @@ public class ApiQuestionAcceptanceTest extends AcceptanceTest {
         ResponseEntity<QuestionDto> response = template().getForEntity("/api/questions/1", QuestionDto.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        QuestionDto body = response.getBody();
+        assertThat(body.getCountOfAnswers()).isEqualTo(2);
+
+        AnswersDto answers = body.getAnswer();
+
+        assertThat(answers.getSize()).isEqualTo(2);
+        assertThat(answers.getPrevLink()).isNull();
+        assertThat(answers.getNextLink()).isNull();
+    }
+
+    @Test
+    public void show_두번째페이지() {
+        ResponseEntity<QuestionDto> response = template().getForEntity("/api/questions/1?page=1", QuestionDto.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        QuestionDto body = response.getBody();
+        assertThat(body.getCountOfAnswers()).isEqualTo(2);
+
+        AnswersDto answers = body.getAnswer();
+
+        assertThat(answers.getSize()).isEqualTo(0);
+        assertThat(answers.getPrevLink()).isNotNull();
+        assertThat(answers.getPrevLink().getHref()).isEqualTo("/api/questions/1?page=0&size=5");
+        assertThat(answers.getPrevLink().getRel()).isEqualTo(Link.PREV);
+
+        assertThat(answers.getNextLink()).isNull();
     }
 
     @Test
