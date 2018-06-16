@@ -1,5 +1,6 @@
 package codesquad.web.dto;
 
+import codesquad.domain.Photo;
 import codesquad.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,6 +28,15 @@ public class UserDto {
     @Email
     private String email;
 
+    private PhotoDto photo;
+
+    public String getPhoto() {
+        if (photo == null) {
+            return null;
+        }
+        return photo.getLocation();
+    }
+
     public UserDto() {
     }
 
@@ -36,6 +46,8 @@ public class UserDto {
                    .password(password)
                    .name(name)
                    .email(email)
+                   .photo(Photo.of(photo))
                    .build();
+
     }
 }

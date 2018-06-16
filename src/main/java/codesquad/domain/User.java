@@ -2,6 +2,7 @@ package codesquad.domain;
 
 import codesquad.common.exception.InvalidPasswordException;
 import codesquad.common.exception.PermissionDeniedException;
+import codesquad.web.dto.PhotoDto;
 import codesquad.web.dto.UserDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
@@ -93,6 +94,7 @@ public class User extends AbstractEntity implements ApiUrlGeneratable {
                       .password(this.password)
                       .name(this.name)
                       .email(this.email)
+                      .photo(PhotoDto.of(photo))
                       .build();
     }
 

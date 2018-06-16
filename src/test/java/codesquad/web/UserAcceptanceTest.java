@@ -74,7 +74,7 @@ public class UserAcceptanceTest extends AcceptanceTest {
     @Test
     @DirtiesContext
     public void update() throws Exception {
-        UpdateUserDto updateUserDto = UpdateUserDto.updateUserBuilder()
+        UpdateUserDto updateUserDto = UpdateUserDto.builder()
                                                    .userId("javajigi")
                                                    .password("test")
                                                    .name("자바지기2")
@@ -102,7 +102,7 @@ public class UserAcceptanceTest extends AcceptanceTest {
 
     @Test
     public void update_잘못된새로운비밀번호() throws Exception {
-        UpdateUserDto updateUser = UpdateUserDto.updateUserBuilder()
+        UpdateUserDto updateUser = UpdateUserDto.builder()
                                                 .userId("javajigi")
                                                 .password("test")
                                                 .name("자바지기")

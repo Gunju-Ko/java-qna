@@ -1,8 +1,10 @@
 package codesquad.web.api;
 
+import codesquad.domain.Answer;
 import codesquad.domain.Question;
 import codesquad.domain.User;
 import codesquad.service.QnaService;
+import codesquad.web.dto.AnswersDto;
 import codesquad.web.dto.QuestionDto;
 import codesquad.web.dto.QuestionsDto;
 import codesquad.web.security.LoginUser;
@@ -40,9 +42,14 @@ public class ApiQuestionController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<QuestionDto> show(@PathVariable long id) {
+    public ResponseEntity<QuestionDto> show(@PathVariable long id,
+                                            @PageableDefault(size = 5) Pageable pageable) {
         Question question = qnaService.findQuestionByIdAndNotDeleted(id);
-        return ResponseEntity.ok(question.toQuestionDto());
+        Page<Answer> answers = qnaService.findAnswerByQuestion(question, pageable);
+
+        QuestionDto result = question.toQuestionDto();
+        result.setAnswer(AnswersDto.of(answers, "/api/questions/" + id));
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("")

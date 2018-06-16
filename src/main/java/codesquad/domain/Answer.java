@@ -86,6 +86,7 @@ public class Answer extends AbstractEntity implements UrlGeneratable, ApiUrlGene
         AnswerDto.AnswerDtoBuilder builder = AnswerDto.builder()
                                                       .id(getId())
                                                       .contents(this.contents)
+                                                      .formattedCreateDate(getFormattedCreateDate())
                                                       .deleted(this.isDeleted());
         if (this.writer != null) {
             builder.writer(this.writer.toUserDto());

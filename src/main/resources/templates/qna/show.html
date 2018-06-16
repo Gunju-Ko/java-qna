@@ -37,13 +37,14 @@
                         </ul>
                     </div>
                 </article>
+                {{/ question }}
 
                 <div class="qna-comment">
                     <div class="qna-comment-slipp">
-                        <p class="qna-comment-count"><strong>{{ countOfAnswers }}</strong>개의 의견</p>
+                        <p class="qna-comment-count"><strong>{{ question.countOfAnswers }}</strong>개의 의견</p>
                         <div class="qna-comment-slipp-articles">
 
-                            {{# answers }}
+                            {{# answers.contents }}
                             <article class="article" id="answer-1405">
                                 <div class="article-header">
                                     <div class="article-header-thumb">
@@ -75,24 +76,45 @@
                                     </ul>
                                 </div>
                             </article>
-                            {{/ answers }}
 
-                            <form class="submit-write" method="post" action="/questions/{{id}}/answers">
-                                <div class="form-group" style="padding:14px;">
-                                    <label for="contents">내용</label>
-                                    <textarea id="contents" name="contents" class="form-control"
-                                              placeholder="답변을 입력해주세요"></textarea>
+                            {{/ answers.contents }}
+
+                            <div class="row">
+                                <div class="col-md-3"></div>
+                                <div class="col-md-6 text-center">
+                                    <ul class="pagination center-block" style="display:inline-block;">
+
+                                        {{# answers.hasPrev }}
+                                        <li><a href="{{answers.prevLink.href}}">«</a></li>
+                                        {{/ answers.hasPrev }}
+
+                                        {{# pages.pages }}
+                                        <li><a href="{{href}}">{{ page }}</a></li>
+                                        {{/ pages.pages }}
+
+                                        {{# answers.hasNext }}
+                                        <li><a href="{{answers.nextLink.href}}">»</a></li>
+                                        {{/ answers.hasNext }}
+                                    </ul>
                                 </div>
-                                <button class="btn btn-success pull-right" type="submit">답변하기</button>
-                                <div class="clearfix"/>
-                            </form>
+                            </div>
                         </div>
+
+                        <form class="submit-write" method="post" action="/questions/{{question.id}}/answers">
+                            <div class="form-group" style="padding:14px;">
+                                <label for="contents">내용</label>
+                                <textarea id="contents" name="contents" class="form-control"
+                                          placeholder="답변을 입력해주세요"></textarea>
+                            </div>
+                            <button class="btn btn-success pull-right" type="submit">답변하기</button>
+                            <div class="clearfix"/>
+                        </form>
                     </div>
                 </div>
             </div>
-            {{/ question }}
         </div>
     </div>
+</div>
 </div>
 
 {{/partial}}

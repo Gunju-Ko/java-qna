@@ -103,7 +103,9 @@ public class Question extends AbstractEntity implements UrlGeneratable, ApiUrlGe
         builder.id(this.getId())
                .title(this.title)
                .contents(this.contents)
-               .deleted(this.deleted);
+               .deleted(this.deleted)
+               .formattedCreateDate(this.getFormattedCreateDate())
+               .countOfAnswers(getCountOfAnswers());
 
         if (this.writer != null) {
             builder.writer(this.writer.toUserDto());

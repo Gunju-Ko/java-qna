@@ -21,6 +21,8 @@ public class AnswerDto {
 
     private boolean deleted;
 
+    private String formattedCreateDate;
+
     public AnswerDto() {
     }
 
