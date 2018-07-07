@@ -1,11 +1,13 @@
 package codesquad.web.api;
 
-import codesquad.web.dto.AnswersDto;
+import codesquad.web.dto.AnswerDto;
 import codesquad.web.dto.Link;
+import codesquad.web.dto.Paged;
 import codesquad.web.dto.QuestionDto;
-import codesquad.web.dto.QuestionsDto;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import support.test.AcceptanceTest;
@@ -35,28 +37,31 @@ public class ApiQuestionAcceptanceTest extends AcceptanceTest {
 
     @Test
     public void showPage_첫번째페이지() throws Exception {
-        ResponseEntity<QuestionsDto> response = template().getForEntity("/api/questions", QuestionsDto.class);
+        ResponseEntity<Paged<QuestionDto>> response = getForEntity("/api/questions");
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        QuestionsDto body = response.getBody();
+        Paged<QuestionDto> body = response.getBody();
         assertThat(body.getSize()).isEqualTo(3);
         assertThat(body.getPrevLink()).isNull();
         assertThat(body.getNextLink()).isNull();
-
     }
 
     @Test
     public void showPage_두번째페이지() throws Exception {
-        ResponseEntity<QuestionsDto> response = template().getForEntity("/api/questions?page=2", QuestionsDto.class);
+        ResponseEntity<Paged<QuestionDto>> response = getForEntity("/api/questions?page=2");
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        QuestionsDto body = response.getBody();
+        Paged<QuestionDto> body = response.getBody();
         assertThat(body.getSize()).isEqualTo(0);
         assertThat(body.getPrevLink()).isNotNull();
         assertThat(body.getPrevLink().getHref()).isEqualTo("/api/questions?page=1&size=10");
         assertThat(body.getPrevLink().getRel()).isEqualTo(Link.PREV);
 
         assertThat(body.getNextLink()).isNull();
+    }
+
+    private ResponseEntity<Paged<QuestionDto>> getForEntity(String url) {
+        return template().exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<Paged<QuestionDto>>() {});
     }
 
     @Test
@@ -68,7 +73,7 @@ public class ApiQuestionAcceptanceTest extends AcceptanceTest {
         QuestionDto body = response.getBody();
         assertThat(body.getCountOfAnswers()).isEqualTo(2);
 
-        AnswersDto answers = body.getAnswer();
+        Paged<AnswerDto> answers = body.getAnswers();
 
         assertThat(answers.getSize()).isEqualTo(2);
         assertThat(answers.getPrevLink()).isNull();
@@ -84,7 +89,7 @@ public class ApiQuestionAcceptanceTest extends AcceptanceTest {
         QuestionDto body = response.getBody();
         assertThat(body.getCountOfAnswers()).isEqualTo(2);
 
-        AnswersDto answers = body.getAnswer();
+        Paged<AnswerDto> answers = body.getAnswers();
 
         assertThat(answers.getSize()).isEqualTo(0);
         assertThat(answers.getPrevLink()).isNotNull();

@@ -2,8 +2,7 @@ package codesquad.web;
 
 import codesquad.domain.Question;
 import codesquad.service.QnaService;
-import codesquad.web.dto.Pages;
-import codesquad.web.dto.QuestionsDto;
+import codesquad.web.dto.Paged;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -24,9 +23,7 @@ public class HomeController {
     public String home(Model model, @PageableDefault(size = 5) Pageable pageable) {
         Page<Question> questions = qnaService.findAll(pageable);
 
-        model.addAttribute("questions", QuestionsDto.of(questions, "/"));
-        model.addAttribute("pages", Pages.of(questions, pageable, "/"));
-
+        model.addAttribute("questions", Paged.of(questions, pageable, "/").map(Question::toQuestionDto));
         return "home";
     }
 }

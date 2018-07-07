@@ -25,28 +25,31 @@ public class PagesTest {
 
     @Test
     public void 첫번째페이지까지존재() throws Exception {
-        when(pageable.getPageNumber()).thenReturn(1);
-        when(pageable.getPageSize()).thenReturn(5);
+        int currentPage = 0;
 
+        when(pageable.getPageNumber()).thenReturn(currentPage);
+        when(pageable.getPageSize()).thenReturn(5);
         // 첫번째 페이지만 존재
         when(page.getTotalPages()).thenReturn(1);
 
         Pages pages = Pages.of(page, pageable, "/");
 
-        assertThat(pages.getPages().size()).isEqualTo(1);
+        assertThat(pages.getPageInfos().size()).isEqualTo(1);
         IntStream.rangeClosed(1, 1)
                  .forEach(i -> {
-                     PageInfo pageInfo = pages.getPages().get(i - 1);
+                     PageInfo pageInfo = pages.getPageInfos().get(i - 1);
 
-                     assertThat(pageInfo.getPage()).isEqualTo(i);
+                     assertThat(pageInfo.getPageNumber()).isEqualTo(currentPage + 1);
                      assertThat(pageInfo.isCurrent()).isTrue();
-                     assertThat(pageInfo.getHref()).isEqualTo(String.format("/?page=%d", i - 1));
+                     assertThat(pageInfo.getHref()).isEqualTo(String.format("/?page=%d", currentPage));
                  });
     }
 
     @Test
     public void 세번째페이지까지존재() throws Exception {
-        when(pageable.getPageNumber()).thenReturn(1);
+        int currentPage = 0;
+
+        when(pageable.getPageNumber()).thenReturn(currentPage);
         when(pageable.getPageSize()).thenReturn(5);
 
         // 세번째 페이지만 존재
@@ -54,13 +57,13 @@ public class PagesTest {
 
         Pages pages = Pages.of(page, pageable, "/");
 
-        assertThat(pages.getPages().size()).isEqualTo(3);
+        assertThat(pages.getPageInfos().size()).isEqualTo(3);
 
         IntStream.rangeClosed(1, 3)
                  .forEach(i -> {
-                     PageInfo pageInfo = pages.getPages().get(i - 1);
+                     PageInfo pageInfo = pages.getPageInfos().get(i - 1);
 
-                     assertThat(pageInfo.getPage()).isEqualTo(i);
+                     assertThat(pageInfo.getPageNumber()).isEqualTo(i);
                      assertThat(pageInfo.isCurrent()).isEqualTo(i == 1);
                      assertThat(pageInfo.getHref()).isEqualTo(String.format("/?page=%d", i - 1));
                  });
@@ -68,7 +71,9 @@ public class PagesTest {
 
     @Test
     public void 일곱번째페이지까지존재() throws Exception {
-        when(pageable.getPageNumber()).thenReturn(1);
+        int currentPage = 0;
+
+        when(pageable.getPageNumber()).thenReturn(currentPage);
         when(pageable.getPageSize()).thenReturn(5);
 
         // 일곱번째 페이지만 존재
@@ -76,13 +81,13 @@ public class PagesTest {
 
         Pages pages = Pages.of(page, pageable, "/");
 
-        assertThat(pages.getPages().size()).isEqualTo(5);
+        assertThat(pages.getPageInfos().size()).isEqualTo(5);
 
         IntStream.rangeClosed(1, 5)
                  .forEach(i -> {
-                     PageInfo pageInfo = pages.getPages().get(i - 1);
+                     PageInfo pageInfo = pages.getPageInfos().get(i - 1);
 
-                     assertThat(pageInfo.getPage()).isEqualTo(i);
+                     assertThat(pageInfo.getPageNumber()).isEqualTo(i);
                      assertThat(pageInfo.isCurrent()).isEqualTo(i == 1);
                      assertThat(pageInfo.getHref()).isEqualTo(String.format("/?page=%d", i - 1));
                  });
@@ -90,7 +95,9 @@ public class PagesTest {
 
     @Test
     public void 일곱번째페이지까지존재_현재세번째페이지() throws Exception {
-        when(pageable.getPageNumber()).thenReturn(3);
+        int currentPage = 2;
+
+        when(pageable.getPageNumber()).thenReturn(currentPage);
         when(pageable.getPageSize()).thenReturn(5);
 
         // 일곱번째 페이지만 존재
@@ -98,13 +105,13 @@ public class PagesTest {
 
         Pages pages = Pages.of(page, pageable, "/");
 
-        assertThat(pages.getPages().size()).isEqualTo(5);
+        assertThat(pages.getPageInfos().size()).isEqualTo(5);
 
         IntStream.rangeClosed(1, 5)
                  .forEach(i -> {
-                     PageInfo pageInfo = pages.getPages().get(i - 1);
+                     PageInfo pageInfo = pages.getPageInfos().get(i - 1);
 
-                     assertThat(pageInfo.getPage()).isEqualTo(i);
+                     assertThat(pageInfo.getPageNumber()).isEqualTo(i);
                      assertThat(pageInfo.isCurrent()).isEqualTo(i == 3);
                      assertThat(pageInfo.getHref()).isEqualTo(String.format("/?page=%d", i - 1));
                  });

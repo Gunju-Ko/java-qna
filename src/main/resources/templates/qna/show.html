@@ -79,25 +79,27 @@
 
                             {{/ answers.contents }}
 
+                            {{# answers }}
                             <div class="row">
                                 <div class="col-md-3"></div>
                                 <div class="col-md-6 text-center">
                                     <ul class="pagination center-block" style="display:inline-block;">
 
-                                        {{# answers.hasPrev }}
-                                        <li><a href="{{answers.prevLink.href}}">«</a></li>
-                                        {{/ answers.hasPrev }}
+                                        {{# hasPrev }}
+                                        <li><a href="{{prevLink.href}}">«</a></li>
+                                        {{/ hasPrev }}
 
-                                        {{# pages.pages }}
-                                        <li><a href="{{href}}">{{ page }}</a></li>
-                                        {{/ pages.pages }}
+                                        {{# pages.pageInfos }}
+                                        <li><a href="{{href}}">{{ pageNumber }}</a></li>
+                                        {{/ pages.pageInfos }}
 
-                                        {{# answers.hasNext }}
-                                        <li><a href="{{answers.nextLink.href}}">»</a></li>
-                                        {{/ answers.hasNext }}
+                                        {{# hasNext }}
+                                        <li><a href="{{nextLink.href}}">»</a></li>
+                                        {{/ hasNext }}
                                     </ul>
                                 </div>
                             </div>
+                            {{/ answers }}
                         </div>
 
                         <form class="submit-write" method="post" action="/questions/{{question.id}}/answers">

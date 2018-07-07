@@ -1,19 +1,21 @@
 package codesquad.web.dto;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class PageInfo {
 
-    private final int page;
+    private int pageNumber;
 
-    private final boolean current;
+    private boolean current;
 
-    private final String href;
+    private String href;
 
-    public PageInfo(String url, int page, boolean current) {
-        this.page = page;
+    public PageInfo(String url, int pageNumber, boolean current) {
+        this.pageNumber = pageNumber;
         this.current = current;
-        this.href = String.format("%s?page=%d", url, page - 1);
+        this.href = String.format("%s?page=%d", url, pageNumber - 1);
     }
 }

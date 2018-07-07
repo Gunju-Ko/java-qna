@@ -1,6 +1,7 @@
 package codesquad.web.dto;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -9,12 +10,13 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Data
+@NoArgsConstructor
 public class Pages {
 
-    private final List<PageInfo> pages;
+    private List<PageInfo> pageInfos;
 
     private Pages(List<PageInfo> pages) {
-        this.pages = pages;
+        this.pageInfos = pages;
     }
 
     public static Pages of(Page<?> page, Pageable pageable, String url) {
@@ -41,7 +43,12 @@ public class Pages {
 
     private static List<PageInfo> makePages(String url, int start, int end, int currentPage) {
         return IntStream.rangeClosed(start, end)
-                        .mapToObj(i -> new PageInfo(url, i, i == currentPage))
+                        .mapToObj(pageNumber -> new PageInfo(url, pageNumber, isCurrentPage(pageNumber, currentPage)))
                         .collect(Collectors.toList());
+    }
+
+    private static boolean isCurrentPage(int pageNumber, int currentPage) {
+        // 현재페이지가 0이면 pageNumber는 1
+        return pageNumber == currentPage + 1;
     }
 }

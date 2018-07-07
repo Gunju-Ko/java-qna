@@ -4,9 +4,8 @@ import codesquad.domain.Answer;
 import codesquad.domain.Question;
 import codesquad.domain.User;
 import codesquad.service.QnaService;
-import codesquad.web.dto.AnswersDto;
+import codesquad.web.dto.Paged;
 import codesquad.web.dto.QuestionDto;
-import codesquad.web.dto.QuestionsDto;
 import codesquad.web.security.LoginUser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,10 +34,10 @@ public class ApiQuestionController {
     }
 
     @GetMapping("")
-    public ResponseEntity<QuestionsDto> showPage(@PageableDefault Pageable pageable) {
+    public ResponseEntity<Paged<QuestionDto>> showPage(@PageableDefault Pageable pageable) {
         Page<Question> questions = qnaService.findAll(pageable);
 
-        return ResponseEntity.ok(QuestionsDto.of(questions, "/api/questions"));
+        return ResponseEntity.ok(Paged.of(questions, pageable, "/api/questions").map(Question::toQuestionDto));
     }
 
     @GetMapping("/{id}")
@@ -48,7 +47,8 @@ public class ApiQuestionController {
         Page<Answer> answers = qnaService.findAnswerByQuestion(question, pageable);
 
         QuestionDto result = question.toQuestionDto();
-        result.setAnswer(AnswersDto.of(answers, "/api/questions/" + id));
+        result.setAnswers(Paged.of(answers, pageable, "/api/questions/" + id).map(Answer::toAnswerDto));
+
         return ResponseEntity.ok(result);
     }
 

@@ -25,24 +25,26 @@
                 {{/ questions.contents }}
             </ul>
             <div class="row">
+                {{# questions }}
                 <div class="col-md-3"></div>
                 <div class="col-md-6 text-center">
                     <ul class="pagination center-block" style="display:inline-block;">
 
-                        {{# questions.hasPrev }}
+                        {{# hasPrev }}
                         <li><a href="{{questions.prevLink.href}}">«</a></li>
-                        {{/ questions.hasPrev }}
+                        {{/ hasPrev }}
 
-                        {{# pages.pages }}
-                        <li><a href="{{href}}">{{ page }}</a></li>
-                        {{/ pages.pages }}
+                        {{# pages.pageInfos }}
+                        <li><a href="{{href}}">{{ pageNumber }}</a></li>
+                        {{/ pages.pageInfos }}
 
-                        {{# questions.hasNext }}
+                        {{# hasNext }}
                         <li><a href="{{questions.nextLink.href}}">»</a></li>
-                        {{/ questions.hasNext }}
+                        {{/ hasNext }}
 
                     </ul>
                 </div>
+                {{/ questions }}
 
                 {{# loginedUser }}
                 <div class="col-md-3 qna-write">

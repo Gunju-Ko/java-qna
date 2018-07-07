@@ -1,10 +1,12 @@
 package codesquad.web.dto;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 @Data
+@NoArgsConstructor
 public class Links {
 
     private Link prev;
@@ -15,10 +17,6 @@ public class Links {
         this.prev = makePrev(page, url);
         this.next = makeNext(page, url);
     }
-
-    public Links() {
-    }
-
     public static LinksBuilder builder() {
         return new LinksBuilder();
     }
@@ -48,8 +46,8 @@ public class Links {
 
         private Page<?> page;
 
-        public LinksBuilder page(Page<?> pageable) {
-            this.page = pageable;
+        public LinksBuilder page(Page<?> page) {
+            this.page = page;
             return this;
         }
 
