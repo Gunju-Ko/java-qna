@@ -29,7 +29,7 @@ public class QuestionDto {
 
     private String formattedCreateDate;
 
-    private AnswersDto answer;
+    private Paged<AnswerDto> answers;
 
     public QuestionDto() {
     }

@@ -4,8 +4,7 @@ import codesquad.domain.Answer;
 import codesquad.domain.Question;
 import codesquad.domain.User;
 import codesquad.service.QnaService;
-import codesquad.web.dto.AnswersDto;
-import codesquad.web.dto.Pages;
+import codesquad.web.dto.Paged;
 import codesquad.web.dto.QuestionDto;
 import codesquad.web.security.LoginUser;
 import org.springframework.data.domain.Page;
@@ -51,12 +50,10 @@ public class QuestionsController {
                        @PageableDefault(size = 5) Pageable pageable,
                        Model model) {
         Question question = qnaService.findQuestionByIdAndNotDeleted(id);
-        model.addAttribute("question", question.toQuestionDto());
-
         Page<Answer> answers = qnaService.findAnswerByQuestion(question, pageable);
 
-        model.addAttribute("answers", AnswersDto.of(answers, "/questions/" + id));
-        model.addAttribute("pages", Pages.of(answers, pageable, "/questions/" + id));
+        model.addAttribute("question", question.toQuestionDto());
+        model.addAttribute("answers", Paged.of(answers, pageable, "/questions/" + id).map(Answer::toAnswerDto));
 
         return "/qna/show";
     }
