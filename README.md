@@ -5,6 +5,23 @@
 * 코드 리뷰 피드백에 대한 개선 작업을 하고 다시 PUSH한다.
 * 모든 피드백을 완료하면 다음 단계를 도전하고 앞의 과정을 반복한다.
 
+## Build
+
+#### gradlew
+``` bash
+./gradlew build
+```
+
+#### docker image
+```
+docker build -t java-qna .
+```
+
+#### run docker container
+```
+docker run -d -p 8080:8080 java-qna  
+```
+
 ## 리팩토링 
 
 * 유저 정보 업데이트 부분 개선
