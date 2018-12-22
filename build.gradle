@@ -17,7 +17,7 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'checkstyle'
 apply plugin: 'jacoco'
 
-version = '1.0.0'
+version = '1.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
